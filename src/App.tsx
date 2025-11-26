@@ -1,14 +1,7 @@
-import { Button } from "./components/ui/button";
-import TelegramOutlineIcon from "./icons/TelegramOutlineIcon";
+import Router from "./router/Router";
 
 function App() {
-  return (
-    <div className="flex flex-col justify-center items-center size-full">
-      <Button className="">
-        Написати в Телеграм <TelegramOutlineIcon />
-      </Button>
-    </div>
-  );
+  return <Router />;
 }
 
 export default App;
