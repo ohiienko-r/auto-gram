@@ -13,6 +13,8 @@ export default function MainLayout() {
         paddingRight: right,
         paddingBottom: bottom,
         paddingLeft: left,
+        width: "100%",
+        height: "100%",
       }}
     >
       <Outlet />
