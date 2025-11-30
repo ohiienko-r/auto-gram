@@ -7,14 +7,15 @@ export default function MainLayout() {
 
   return (
     <main
-      className="size-full"
       style={{
         paddingTop: top + contentSafeAreaInsetTop,
         paddingRight: right,
-        paddingBottom: bottom,
+        paddingBottom: bottom || "20px",
         paddingLeft: left,
         width: "100%",
         height: "100%",
+        overflowY: "auto",
+        scrollbarWidth: "none",
       }}
     >
       <Outlet />
