@@ -7,7 +7,7 @@ export const TYPEOF_TRANSPORT = {
   BUS: "bus",
 } as const;
 
-export const TYPES_OF_TRANSPORT = [
+export const TRANSPORT_OPTIONS = [
   { value: TYPEOF_TRANSPORT.ALL, label: "Все" },
   { value: TYPEOF_TRANSPORT.PASSENGER, label: "Легкові" },
   { value: TYPEOF_TRANSPORT.MOTO, label: "Мото" },
@@ -16,7 +16,7 @@ export const TYPES_OF_TRANSPORT = [
   { value: TYPEOF_TRANSPORT.BUS, label: "Автобуси" },
 ];
 
-export const CAR_BRANDS = [
+export const CAR_BRANDS_OPTIONS = [
   { value: "acura", label: "Acura" },
   { value: "alfa-romeo", label: "Alfa Romeo" },
   { value: "aston-martin", label: "Aston Martin" },
@@ -96,7 +96,7 @@ export const CAR_CONDITION = {
   USED: "used",
 } as const;
 
-export const CAR_CONDITION_FILTERS = [
+export const CAR_CONDITION_OPTIONS = [
   { value: CAR_CONDITION.ALL, label: "Всі" },
   { value: CAR_CONDITION.NEW, label: "Нові" },
   { value: CAR_CONDITION.USED, label: "Вживані" },
@@ -108,8 +108,143 @@ export const CAR_ACCIDENT = {
   NO: "no",
 } as const;
 
-export const CAR_ACCIDENT_FILTERS = [
+export const CAR_ACCIDENT_OPTIONS = [
   { value: CAR_ACCIDENT.ALL, label: "Всі" },
   { value: CAR_ACCIDENT.YES, label: "Було" },
   { value: CAR_ACCIDENT.NO, label: "Не було" },
+];
+
+export const FUEL_TYPE = {
+  ALL: "all",
+  PETROL: "petrol",
+  GAS: "gas",
+  DIESEL: "diesel",
+  ELECTRO: "electro",
+  GAS_PETROL: "gas_petrol",
+  METHANE_PETROL: "methane_petrol",
+  HYBRID_HEV: "hybrid_hev",
+  HYBRID_PHEV: "hybrid_phev",
+  HYBRID_MHEV: "hybrid_mhev",
+} as const;
+
+export const FUEL_TYPE_OPTIONS = [
+  { value: FUEL_TYPE.ALL, label: "Всі" },
+  { value: FUEL_TYPE.PETROL, label: "Бензин" },
+  { value: FUEL_TYPE.GAS, label: "Газ" },
+  { value: FUEL_TYPE.DIESEL, label: "Дизель" },
+  { value: FUEL_TYPE.ELECTRO, label: "Електро" },
+  { value: FUEL_TYPE.GAS_PETROL, label: "Пропан-бутан/Бензин" },
+  { value: FUEL_TYPE.METHANE_PETROL, label: "Метан/Бензин" },
+  { value: FUEL_TYPE.HYBRID_HEV, label: "Гібрид HEV" },
+  { value: FUEL_TYPE.HYBRID_PHEV, label: "Гібрид PHEV" },
+  { value: FUEL_TYPE.HYBRID_MHEV, label: "Гібрид MHEV" },
+];
+
+export const TRANSMISSION_TYPE = {
+  ALL: "all",
+  MANUAL: "manual",
+  AUTOMATIC: "automatic",
+  TIPTRONIC: "tiptronic",
+  ROBOTIC: "robotic",
+  VARIATOR: "variator",
+} as const;
+
+export const TRANSMISSION_TYPE_OPTIONS = [
+  { value: TRANSMISSION_TYPE.ALL, label: "Усі" },
+  { value: TRANSMISSION_TYPE.MANUAL, label: "Ручна/Механічна" },
+  { value: TRANSMISSION_TYPE.AUTOMATIC, label: "Автомат" },
+  { value: TRANSMISSION_TYPE.TIPTRONIC, label: "Типтронік" },
+  { value: TRANSMISSION_TYPE.ROBOTIC, label: "Робот" },
+  { value: TRANSMISSION_TYPE.VARIATOR, label: "Варіатор" },
+];
+
+export const REGIONS_OPTIONS = [
+  { value: "vinnytsia", label: "Вінницька область" },
+  { value: "volyn", label: "Волинська область" },
+  { value: "dnipropetrovsk", label: "Дніпропетровська область" },
+  { value: "donetsk", label: "Донецька область" },
+  { value: "zhytomyr", label: "Житомирська область" },
+  { value: "zakarpattia", label: "Закарпатська область" },
+  { value: "zaporizhzhia", label: "Запорізька область" },
+  { value: "ivano_frankivsk", label: "Івано-Франківська область" },
+  { value: "kyiv", label: "Київська область" },
+  { value: "kirovohrad", label: "Кіровоградська область" },
+  { value: "luhansk", label: "Луганська область" },
+  { value: "lviv", label: "Львівська область" },
+  { value: "mykolaiv", label: "Миколаївська область" },
+  { value: "odesa", label: "Одеська область" },
+  { value: "poltava", label: "Полтавська область" },
+  { value: "rivne", label: "Рівненська область" },
+  { value: "sumy", label: "Сумська область" },
+  { value: "ternopil", label: "Тернопільська область" },
+  { value: "kharkiv", label: "Харківська область" },
+  { value: "kherson", label: "Херсонська область" },
+  { value: "khmelnytskyi", label: "Хмельницька область" },
+  { value: "cherkasy", label: "Черкаська область" },
+  { value: "chernivtsi", label: "Чернівецька область" },
+  { value: "chernihiv", label: "Чернігівська область" },
+  { value: "kyiv_city", label: "м. Київ" },
+  { value: "sevastopol", label: "м. Севастополь" },
+];
+
+export const BODY_TYPE = {
+  UNIVERSAL: "universal",
+  SEDAN: "sedan",
+  HATCHBACK: "hatchback",
+  COUPE: "coupe",
+  CABRIOLET: "cabriolet",
+  MINIVAN: "minivan",
+} as const;
+
+export const BODY_TYPE_OPTIONS = [
+  { value: BODY_TYPE.UNIVERSAL, label: "Універсал" },
+  { value: BODY_TYPE.SEDAN, label: "Седан" },
+  { value: BODY_TYPE.HATCHBACK, label: "Хетчбек" },
+  { value: BODY_TYPE.COUPE, label: "Купе" },
+  { value: BODY_TYPE.CABRIOLET, label: "Кабріолет" },
+  { value: BODY_TYPE.MINIVAN, label: "Мінівен" },
+];
+
+export const SUSPENSION_TYPE = {
+  FULL: "full",
+  PARTIAL: "partial",
+} as const;
+
+export const SUSPENSION_TYPE_OPTIONS = [
+  { value: SUSPENSION_TYPE.FULL, label: "Повна" },
+  { value: SUSPENSION_TYPE.PARTIAL, label: "Часткова" },
+];
+
+export const DRIVE_TYPE = {
+  AWD: "awd", // Повний
+  RWD: "rwd", // Задній
+  FWD: "fwd", // Передній
+} as const;
+
+export const DRIVE_TYPE_OPTIONS = [
+  { value: DRIVE_TYPE.AWD, label: "Повний" },
+  { value: DRIVE_TYPE.RWD, label: "Задній" },
+  { value: DRIVE_TYPE.FWD, label: "Передній" },
+];
+
+export const CAR_COUNTRIES_OPTIONS = [
+  { value: "usa", label: "США" },
+  { value: "germany", label: "Німеччина" },
+  { value: "japan", label: "Японія" },
+  { value: "south-korea", label: "Південна Корея" },
+  { value: "china", label: "Китай" },
+  { value: "france", label: "Франція" },
+  { value: "italy", label: "Італія" },
+  { value: "uk", label: "Велика Британія" },
+  { value: "sweden", label: "Швеція" },
+  { value: "czech-republic", label: "Чехія" },
+  { value: "romania", label: "Румунія" },
+  { value: "spain", label: "Іспанія" },
+  { value: "netherlands", label: "Нідерланди" },
+  { value: "switzerland", label: "Швейцарія" },
+  { value: "austria", label: "Австрія" },
+  { value: "vietnam", label: "Вʼєтнам" },
+  { value: "india", label: "Індія" },
+  { value: "poland", label: "Польща" },
+  { value: "ukraine", label: "Україна" },
 ];
