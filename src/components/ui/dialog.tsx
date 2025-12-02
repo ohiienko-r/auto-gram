@@ -61,7 +61,7 @@ function DialogContent({
         <DialogPrimitive.Content
           data-slot="dialog-content"
           className={cn(
-            "z-50 relative gap-4 grid bg-background shadow-lg rounded-2xl w-full data-[state=closed]:animate-out data-[state=open]:animate-in duration-200 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "z-50 relative flex flex-col flex-1 bg-transparent w-full data-[state=closed]:animate-out data-[state=open]:animate-in duration-200 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
           )}
           {...props}
@@ -86,7 +86,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 px-2 py-3 text-center", className)}
+      className={cn(
+        "bg-background px-2 py-4 rounded-t-2xl h-fit text-center",
+        className
+      )}
       {...props}
     />
   );

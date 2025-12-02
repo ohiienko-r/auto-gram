@@ -46,6 +46,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
+import MultiselectList from "@/components/MultiselectList";
 
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
 
@@ -83,7 +84,7 @@ export default function SearchForm() {
     <Form {...form}>
       <form
         className="flex flex-col gap-8"
-        style={{ paddingBottom: (bottom || 20) + 90 }}
+        style={{ paddingBottom: (bottom || 20) + 70 }}
         onSubmit={handleSubmit((formValues) => {
           console.log(formValues);
         })}
@@ -188,7 +189,7 @@ export default function SearchForm() {
         <FormField
           control={control}
           name="carBrands"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Марка</FormLabel>
 
@@ -205,34 +206,36 @@ export default function SearchForm() {
                     className="size-full"
                   >
                     <DialogHeader>
-                      <DialogTitle className="justify-self-center">
-                        Марка авто
-                      </DialogTitle>
+                      <DialogTitle>Марка авто</DialogTitle>
                     </DialogHeader>
 
-                    <div className="flex flex-col flex-1 gap-3 px-4 overflow-y-scroll">
-                      <hr className="border-black/30" />
+                    <MultiselectList
+                      options={CAR_BRANDS_OPTIONS}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
 
-                      {CAR_BRANDS_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          className="flex flex-col gap-3 font-medium text-start"
-                        >
-                          <p>{option.label}</p>
-                          <hr className="border-black/30" />
-                        </button>
-                      ))}
-                    </div>
-
-                    <DialogFooter>
+                    <DialogFooter className="items-center">
                       <DialogClose asChild>
-                        <Button onClick={() => console.log("click")}>
+                        <Button
+                          onClick={() => console.log("click")}
+                          className="w-fit"
+                        >
                           Зберегти <CheckMarkIcon />
                         </Button>
                       </DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
+
+                {field.value?.map((item) => (
+                  <Toggle key={item} pressed>
+                    {
+                      CAR_BRANDS_OPTIONS.find((option) => option.value === item)
+                        ?.label
+                    }
+                  </Toggle>
+                ))}
               </div>
             </FormItem>
           )}
