@@ -32,23 +32,12 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-import MultiselectList from "@/components/MultiselectList";
-
-import CheckMarkIcon from "@/icons/CheckMarkIcon";
+import Multiselect from "@/components/Multiselect";
 
 export default function SearchForm() {
   const { bottom } = viewport.safeAreaInsets();
@@ -193,50 +182,12 @@ export default function SearchForm() {
             <FormItem>
               <FormLabel>Марка</FormLabel>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Toggle pressed={false} className="w-fit">
-                      Обрати
-                    </Toggle>
-                  </DialogTrigger>
-
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="size-full"
-                  >
-                    <DialogHeader>
-                      <DialogTitle>Марка авто</DialogTitle>
-                    </DialogHeader>
-
-                    <MultiselectList
-                      options={CAR_BRANDS_OPTIONS}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-
-                    <DialogFooter className="items-center">
-                      <DialogClose asChild>
-                        <Button
-                          onClick={() => console.log("click")}
-                          className="w-fit"
-                        >
-                          Зберегти <CheckMarkIcon />
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-
-                {field.value?.map((item) => (
-                  <Toggle key={item} pressed>
-                    {
-                      CAR_BRANDS_OPTIONS.find((option) => option.value === item)
-                        ?.label
-                    }
-                  </Toggle>
-                ))}
-              </div>
+              <Multiselect
+                listTitle="Марка"
+                options={CAR_BRANDS_OPTIONS}
+                value={field.value}
+                onChange={field.onChange}
+              />
             </FormItem>
           )}
         />
@@ -244,52 +195,16 @@ export default function SearchForm() {
         <FormField
           control={control}
           name="carModels"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Модель</FormLabel>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Toggle pressed={false} className="w-fit">
-                      Обрати
-                    </Toggle>
-                  </DialogTrigger>
-
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="size-full"
-                  >
-                    <DialogHeader>
-                      <DialogTitle className="justify-self-center">
-                        Модель авто
-                      </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="flex flex-col flex-1 gap-3 px-4 overflow-y-scroll">
-                      <hr className="border-black/30" />
-
-                      {CAR_BRANDS_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          className="flex flex-col gap-3 font-medium text-start"
-                        >
-                          <p>{option.label}</p>
-                          <hr className="border-black/30" />
-                        </button>
-                      ))}
-                    </div>
-
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button onClick={() => console.log("click")}>
-                          Зберегти <CheckMarkIcon />
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Multiselect
+                listTitle="Модель"
+                options={CAR_BRANDS_OPTIONS}
+                value={field.value}
+                onChange={field.onChange}
+              />
             </FormItem>
           )}
         />
@@ -397,52 +312,16 @@ export default function SearchForm() {
         <FormField
           control={control}
           name="regions"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Регіон</FormLabel>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Toggle pressed={false} className="w-fit">
-                      Обрати
-                    </Toggle>
-                  </DialogTrigger>
-
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="size-full"
-                  >
-                    <DialogHeader>
-                      <DialogTitle className="justify-self-center">
-                        Регіон
-                      </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="flex flex-col flex-1 gap-3 px-4 overflow-y-scroll">
-                      <hr className="border-black/30" />
-
-                      {REGIONS_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          className="flex flex-col gap-3 font-medium text-start"
-                        >
-                          <p>{option.label}</p>
-                          <hr className="border-black/30" />
-                        </button>
-                      ))}
-                    </div>
-
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button onClick={() => console.log("click")}>
-                          Зберегти <CheckMarkIcon />
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Multiselect
+                listTitle="Регіон"
+                options={REGIONS_OPTIONS}
+                value={field.value}
+                onChange={field.onChange}
+              />
             </FormItem>
           )}
         />
@@ -525,52 +404,16 @@ export default function SearchForm() {
         <FormField
           control={control}
           name="carCountries"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Країна виробник</FormLabel>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Toggle pressed={false} className="w-fit">
-                      Обрати
-                    </Toggle>
-                  </DialogTrigger>
-
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="size-full"
-                  >
-                    <DialogHeader>
-                      <DialogTitle className="justify-self-center">
-                        Країна виробник
-                      </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="flex flex-col flex-1 gap-3 px-4 overflow-y-scroll">
-                      <hr className="border-black/30" />
-
-                      {CAR_COUNTRIES_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
-                          className="flex flex-col gap-3 font-medium text-start"
-                        >
-                          <p>{option.label}</p>
-                          <hr className="border-black/30" />
-                        </button>
-                      ))}
-                    </div>
-
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button onClick={() => console.log("click")}>
-                          Зберегти <CheckMarkIcon />
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Multiselect
+                listTitle="Країна"
+                options={CAR_COUNTRIES_OPTIONS}
+                value={field.value}
+                onChange={field.onChange}
+              />
             </FormItem>
           )}
         />
@@ -667,6 +510,7 @@ export default function SearchForm() {
             <p>Знайдено</p>
             <p>6500 авто</p>
           </div>
+
           <Button
             onClick={() => reset()}
             variant={"secondary"}
