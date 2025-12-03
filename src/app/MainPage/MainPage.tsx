@@ -14,7 +14,12 @@ export default function MainPage() {
           <PlusIcon />
         </Button>
       </header>
+
       <Navigation />
+
+      <section className="flex flex-col gap-3">
+        <p className="font-medium text-black/60 text-base">Рекомендуємо</p>
+      </section>
     </section>
   );
 }
