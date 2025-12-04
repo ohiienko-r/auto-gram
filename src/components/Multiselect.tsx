@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { viewport } from "@tma.js/sdk-react";
 import clsx from "clsx";
 
 import type { Option } from "@/types/app";
@@ -36,6 +37,7 @@ export default function Multiselect({
 }: MultiselectListProps) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
+  const { bottom } = viewport.safeAreaInsets();
 
   const currentOptions = useMemo(() => {
     if (!options) return [];
@@ -76,16 +78,20 @@ export default function Multiselect({
       ))}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent aria-describedby={undefined} className="size-full">
+        <DialogContent
+          aria-describedby={undefined}
+          className="size-full"
+          style={{ paddingBottom: bottom }}
+        >
           <DialogHeader>
             <DialogTitle>{listTitle}</DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-col flex-1 justify-start bg-white rounded-b-2xl overflow-hidden">
+          <div className="flex flex-col flex-1 justify-start bg-white pb-4 rounded-b-2xl max-h-[calc(100%-76px)] overflow-hidden">
             <div className="relative">
               {!filter && (
                 <div className="top-0 left-4 absolute flex items-center gap-2.5 h-full">
-                  <span className="font-medium text-black/60 text-base">
+                  <span className="font-medium text-black text-base">
                     Пошук
                   </span>
 
@@ -97,8 +103,9 @@ export default function Multiselect({
                 type="text"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="py-2 pr-10 pl-4 border border-t-primary/60 border-b-primary/60 outline-none w-full font-medium placeholder:text-black/60 text-base"
+                className="py-2 pr-10 pl-4 border border-t-primary/60 border-b-primary/60 outline-none w-full placeholder:font-light font-medium placeholder:text-black/60 text-base caret-black/60"
                 placeholder="Пошук"
+                autoFocus={false}
               />
 
               <button
@@ -109,7 +116,7 @@ export default function Multiselect({
               </button>
             </div>
 
-            <ul className="flex flex-col justify-start gap-3 px-4 pb-5 h-full max-h-[500px] overflow-y-auto">
+            <ul className="flex flex-col justify-start gap-3 px-4 overflow-y-auto">
               <Separator className="bg-transparent" />
 
               {currentOptions.map((option) => (

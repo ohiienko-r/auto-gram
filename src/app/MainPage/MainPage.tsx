@@ -1,6 +1,7 @@
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
+import AdvertisementCard from "../../components/AdvertisementCard";
 
 import PlusIcon from "@/icons/PlusIcon";
 
@@ -18,7 +19,15 @@ export default function MainPage() {
       <Navigation />
 
       <section className="flex flex-col gap-3">
-        <p className="font-medium text-black/60 text-base">Рекомендуємо</p>
+        <h3 className="font-medium text-black/60 text-base">Рекомендуємо</h3>
+
+        <div className="flex flex-col flex-1 gap-5 h-full overflow-y-auto">
+          <AdvertisementCard />
+
+          <AdvertisementCard />
+
+          <AdvertisementCard />
+        </div>
       </section>
     </section>
   );
