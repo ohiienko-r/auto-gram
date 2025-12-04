@@ -36,7 +36,7 @@ export default function AdvertisementCard() {
           </div>
 
           <button className="group size-6 cursor-pointer">
-            <HeartIcon className="group-hover:fill-primary" />
+            <HeartIcon className="fill-primary" />
           </button>
         </div>
 

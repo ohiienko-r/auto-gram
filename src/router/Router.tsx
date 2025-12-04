@@ -6,6 +6,7 @@ import NestedLayout from "@/layout/NestedLayout";
 
 import MainPage from "@/app/MainPage/MainPage";
 import SearchPage from "@/app/SearchPage/SearchPage";
+import FavoritesPage from "@/app/FavoritesPage/FavoritesPage";
 
 export default function Router() {
   return (
@@ -16,6 +17,7 @@ export default function Router() {
 
           <Route element={<NestedLayout />}>
             <Route path={ROUTES_NAMES.SEARCH} element={<SearchPage />} />
+            <Route path={ROUTES_NAMES.FAVORITES} element={<FavoritesPage />} />
           </Route>
         </Route>
       </Routes>

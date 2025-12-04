@@ -21,7 +21,7 @@ export default function MainPage() {
       <section className="flex flex-col gap-3">
         <h3 className="font-medium text-black/60 text-base">Рекомендуємо</h3>
 
-        <div className="flex flex-col flex-1 gap-5 h-full overflow-y-auto">
+        <div className="flex flex-col gap-5">
           <AdvertisementCard />
 
           <AdvertisementCard />
