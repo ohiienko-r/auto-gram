@@ -62,16 +62,17 @@ export default function Multiselect({
       </Toggle>
 
       {value?.map((item) => (
-        <button
+        <div
+          key={item}
           className="flex items-center cursor-pointer"
           onClick={() => handleOnChange(item)}
         >
-          <Toggle key={item} pressed className="pointer-events-none">
+          <Toggle pressed className="pointer-events-none">
             {options?.find((option) => option.value === item)?.label}
           </Toggle>
 
           <XIcon className="text-primary" />
-        </button>
+        </div>
       ))}
 
       <Dialog open={open} onOpenChange={setOpen}>

@@ -1,5 +1,11 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { viewport } from "@tma.js/sdk-react";
+
+import {
+  SearchFormValidationSchema,
+  type SearchFormValues,
+} from "../validation/validation";
 
 import {
   TYPEOF_TRANSPORT,
@@ -41,26 +47,27 @@ import Multiselect from "@/components/Multiselect";
 
 export default function SearchForm() {
   const { bottom } = viewport.safeAreaInsets();
-  const form = useForm({
+  const form = useForm<SearchFormValues>({
+    resolver: zodResolver(SearchFormValidationSchema),
     defaultValues: {
-      priceRange: [0, 75] as [number, number],
+      priceRange: [0, 75],
       possibleBargain: false,
       typeofTransport: TYPEOF_TRANSPORT.ALL,
-      carBrands: [] as string[],
-      carModels: [] as string[],
+      carBrands: [],
+      carModels: [],
       condition: CAR_CONDITION.ALL,
       carAccident: CAR_ACCIDENT.ALL,
       fuelType: FUEL_TYPE.ALL,
       transmission: TRANSMISSION_TYPE.ALL,
-      regions: [] as string[],
+      regions: [],
       bodyType: BODY_TYPE.SEDAN,
       suspension: SUSPENSION_TYPE.PARTIAL,
       driveType: DRIVE_TYPE.FWD,
-      carCountries: [] as string[],
-      productionYearFrom: undefined,
-      productionYearTo: undefined,
-      kilometrageFrom: "",
-      kilometrageTo: "",
+      carCountries: [],
+      productionYearFrom: 2000,
+      productionYearTo: new Date().getFullYear(),
+      kilometrageFrom: 0,
+      kilometrageTo: 150000,
       noKilometrage: false,
     },
   });
@@ -87,13 +94,13 @@ export default function SearchForm() {
                 document.querySelector(
                   "#range-input .range-slider__thumb[data-lower]"
                 ) as HTMLElement | null
-              )?.style.setProperty("--slider-value", `"$${field.value[0]}"`);
+              )?.style.setProperty("--slider-value", `"$${field.value?.[0]}"`);
 
               (
                 document.querySelector(
                   "#range-input .range-slider__thumb[data-upper]"
                 ) as HTMLElement | null
-              )?.style.setProperty("--slider-value", `"$${field.value[1]}"`);
+              )?.style.setProperty("--slider-value", `"$${field.value?.[1]}"`);
 
               return (
                 <FormItem className="gap-8">
@@ -110,18 +117,20 @@ export default function SearchForm() {
                     <div className="gap-3 grid grid-cols-2">
                       <Input
                         placeholder="Від"
-                        value={field.value[0]}
+                        value={field.value?.[0]}
                         onChange={(e) =>
-                          field.onChange([e.target.value, field.value[1]])
+                          field.onChange([e.target.value, field.value?.[1]])
                         }
+                        type="number"
                       />
 
                       <Input
                         placeholder="До"
-                        value={field.value[1]}
+                        value={field.value?.[1]}
                         onChange={(e) =>
-                          field.onChange([field.value[0], e.target.value])
+                          field.onChange([field.value?.[0], e.target.value])
                         }
+                        type="number"
                       />
                     </div>
                   </div>
@@ -185,7 +194,7 @@ export default function SearchForm() {
               <Multiselect
                 listTitle="Марка"
                 options={CAR_BRANDS_OPTIONS}
-                value={field.value}
+                value={field.value ?? []}
                 onChange={field.onChange}
               />
             </FormItem>
@@ -202,7 +211,7 @@ export default function SearchForm() {
               <Multiselect
                 listTitle="Модель"
                 options={CAR_BRANDS_OPTIONS}
-                value={field.value}
+                value={field.value ?? []}
                 onChange={field.onChange}
               />
             </FormItem>
@@ -319,7 +328,7 @@ export default function SearchForm() {
               <Multiselect
                 listTitle="Регіон"
                 options={REGIONS_OPTIONS}
-                value={field.value}
+                value={field.value ?? []}
                 onChange={field.onChange}
               />
             </FormItem>
@@ -411,7 +420,7 @@ export default function SearchForm() {
               <Multiselect
                 listTitle="Країна"
                 options={CAR_COUNTRIES_OPTIONS}
-                value={field.value}
+                value={field.value ?? []}
                 onChange={field.onChange}
               />
             </FormItem>
@@ -427,7 +436,7 @@ export default function SearchForm() {
                 <FormLabel>Рік виробництва</FormLabel>
 
                 <FormControl>
-                  <Input {...field} placeholder="Від" />
+                  <Input {...field} placeholder="Від" type="number" />
                 </FormControl>
               </FormItem>
             )}
@@ -439,7 +448,7 @@ export default function SearchForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input {...field} placeholder="До" />
+                  <Input {...field} placeholder="До" type="number" />
                 </FormControl>
               </FormItem>
             )}
@@ -459,6 +468,7 @@ export default function SearchForm() {
                     {...field}
                     placeholder="Від"
                     disabled={noKilometrage}
+                    type="number"
                   />
                 </FormControl>
               </FormItem>
@@ -471,7 +481,12 @@ export default function SearchForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input {...field} placeholder="До" disabled={noKilometrage} />
+                  <Input
+                    {...field}
+                    placeholder="До"
+                    disabled={noKilometrage}
+                    type="number"
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -489,8 +504,8 @@ export default function SearchForm() {
                       field.onChange(val);
 
                       if (val) {
-                        setValue("kilometrageFrom", "");
-                        setValue("kilometrageTo", "");
+                        setValue("kilometrageFrom", undefined);
+                        setValue("kilometrageTo", undefined);
                       }
                     }}
                   >
