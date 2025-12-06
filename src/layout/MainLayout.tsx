@@ -14,7 +14,9 @@ export default function MainLayout() {
         paddingLeft: left,
         width: "100%",
         height: "100%",
-        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        flex: "1",
         scrollbarWidth: "none",
       }}
     >

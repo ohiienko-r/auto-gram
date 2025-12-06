@@ -7,7 +7,7 @@ import PlusIcon from "@/icons/PlusIcon";
 
 export default function MainPage() {
   return (
-    <section className="flex flex-col flex-1 gap-4 px-4 pt-5">
+    <section className="flex flex-col flex-1 gap-4 px-4 pt-5 overflow-hidden">
       <header className="flex justify-between items-center">
         <Logo />
 
@@ -18,7 +18,7 @@ export default function MainPage() {
 
       <Navigation />
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col flex-1 gap-3 overflow-y-auto">
         <h3 className="font-medium text-black/60 text-base">Рекомендуємо</h3>
 
         <div className="flex flex-col gap-5">
