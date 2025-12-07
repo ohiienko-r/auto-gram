@@ -15,7 +15,7 @@ export default function Navigation() {
           onClick={() => navigate(item.href)}
           key={item.href}
         >
-          {item.title} <item.icon />
+          {item.title} {item.icon}
         </Button>
       ))}
     </nav>
