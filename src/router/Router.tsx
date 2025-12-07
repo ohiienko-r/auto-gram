@@ -8,6 +8,7 @@ import MainPage from "@/app/MainPage/MainPage";
 import SearchPage from "@/app/SearchPage/SearchPage";
 import FavoritesPage from "@/app/FavoritesPage/FavoritesPage";
 import DetailsPage from "@/app/DetailsPage/DetailsPage";
+import ProfilePage from "@/app/ProfilePage/ProfilePage";
 
 export default function Router() {
   return (
@@ -23,6 +24,7 @@ export default function Router() {
               path={`${ROUTES_NAMES.DETAILS}/:id`}
               element={<DetailsPage />}
             />
+            <Route path={ROUTES_NAMES.PROFILE} element={<ProfilePage />} />
           </Route>
         </Route>
       </Routes>
