@@ -64,7 +64,7 @@ export default function ProfileForm() {
 
         <button
           type="button"
-          className="flex items-center gap-1.5 font-semibold text-primary active:text-primary/80 text-base transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
         >
           Змінити <EditIcon />
         </button>
