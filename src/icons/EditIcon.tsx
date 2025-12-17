@@ -10,7 +10,7 @@ export default function EditIcon({ className }: IconProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <g clip-path="url(#clip0_6050_1961)">
+      <g clipPath="url(#clip0_6050_1961)">
         <path
           d="M5 16L4 20L8 19L19.5858 7.41421C20.3668 6.63316 20.3668 5.36683 19.5858 4.58579L19.4142 4.41421C18.6332 3.63316 17.3668 3.63317 16.5858 4.41421L5 16Z"
           stroke="currentColor"
