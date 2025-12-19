@@ -1,5 +1,6 @@
 import Title from "@/components/Title";
-import ListingPhotosCarousel from "@/components/ListingPhotosCarousel";
+
+import ListingForm from "@/shared/forms/ListingForm";
 
 export default function CreateListingPage() {
   return (
@@ -8,7 +9,7 @@ export default function CreateListingPage() {
         <Title>Продати авто</Title>
       </header>
 
-      <ListingPhotosCarousel />
+      <ListingForm />
     </section>
   );
 }
