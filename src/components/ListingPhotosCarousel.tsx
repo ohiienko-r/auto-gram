@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ChangeEvent } from "react";
+import { useState, useEffect, useRef, type ChangeEvent, useMemo } from "react";
 
 import {
   Carousel,
@@ -27,7 +27,6 @@ export default function ListingPhotosCarousel({
 }: ListingPhotosCarouselProps) {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [currentItem, setCurrentItem] = useState(0);
-  const [count, setCount] = useState(0);
   const [fileTooLarge, setFileTooLarge] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,16 +34,25 @@ export default function ListingPhotosCarousel({
     const handleCarouselChange = () => {
       if (!api) return;
 
-      setCount(api.scrollSnapList().length);
       setCurrentItem(api.selectedScrollSnap() + 1);
-
-      api.on("select", () => {
-        setCurrentItem(api.selectedScrollSnap() + 1);
-      });
     };
 
     handleCarouselChange();
   }, [api]);
+
+  useEffect(() => {
+    if (!api) return;
+
+    const handleItemChange = () => {
+      setCurrentItem(api.selectedScrollSnap() + 1);
+    };
+
+    api.on("select", handleItemChange);
+
+    return () => {
+      api.off("select", handleItemChange);
+    };
+  }, [api, data]);
 
   const handleUploadFileClick = () => {
     setFileTooLarge(false);
@@ -74,22 +82,38 @@ export default function ListingPhotosCarousel({
     api?.scrollTo(0, true);
   };
 
+  const unifiedItems = useMemo(() => {
+    if (!data?.length) return [];
+
+    return data.map((item) => ({
+      ...item,
+      photo:
+        typeof item.photo === "string"
+          ? item.photo
+          : URL.createObjectURL(item.photo),
+    }));
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      unifiedItems.forEach((item) => {
+        if (typeof item.photo === "string") return;
+        URL.revokeObjectURL(item.photo);
+      });
+    };
+  }, [unifiedItems]);
+
   return (
     <div className="relative w-full">
       <Carousel setApi={setApi} className="h-full">
         <CarouselContent>
-          {data?.map((item) => (
+          {unifiedItems?.map((item) => (
             <CarouselItem
               key={item.id}
               className="rounded-2xl h-[220px] overflow-hidden select-none"
             >
-              {/* TODO: Update src handling to avoid memory leaks */}
               <img
-                src={
-                  typeof item.photo === "string"
-                    ? item.photo
-                    : URL.createObjectURL(item.photo)
-                }
+                src={item.photo}
                 className="bg-primary/10 rounded-2xl size-full object-cover"
               />
             </CarouselItem>
@@ -128,17 +152,19 @@ export default function ListingPhotosCarousel({
       {data?.length > 0 && (
         <div className="bottom-2.5 left-2.5 absolute flex items-center gap-2">
           <div className="flex justify-center items-center bg-white px-3 rounded-[12px] h-[35px] font-medium text-base">
-            {/* TODO: Debug required */}
-            {currentItem <= count ? currentItem : count}/{count}
+            {currentItem <= data?.length - 1 ? currentItem : data?.length ?? 0}/
+            {data?.length ?? 0}
           </div>
 
-          <button
-            type="button"
-            onClick={handleOnPhotoRemove}
-            className="flex justify-center items-center bg-white rounded-[12px] size-[35px] text-primary"
-          >
-            <TrashIcon />
-          </button>
+          {currentItem <= data?.length && (
+            <button
+              type="button"
+              onClick={handleOnPhotoRemove}
+              className="flex justify-center items-center bg-white rounded-[12px] size-[35px] text-primary"
+            >
+              <TrashIcon />
+            </button>
+          )}
         </div>
       )}
 
