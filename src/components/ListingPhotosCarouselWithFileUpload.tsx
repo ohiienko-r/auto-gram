@@ -20,7 +20,7 @@ interface ListingPhotosCarouselProps {
   onPhotoRemove?: (index: number) => void;
 }
 
-export default function ListingPhotosCarousel({
+export default function ListingPhotosCarouselWithFileUpload({
   data = [],
   onPhotoAdd,
   onPhotoRemove,
@@ -104,7 +104,7 @@ export default function ListingPhotosCarousel({
   }, [unifiedItems]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative rounded-2xl w-full overflow-hidden">
       <Carousel setApi={setApi} className="h-full">
         <CarouselContent>
           {unifiedItems?.map((item) => (

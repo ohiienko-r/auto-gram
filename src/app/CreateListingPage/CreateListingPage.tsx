@@ -1,5 +1,4 @@
 import Title from "@/components/Title";
-
 import ListingForm from "@/shared/forms/ListingForm";
 
 export default function CreateListingPage() {
