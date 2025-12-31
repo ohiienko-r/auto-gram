@@ -1,9 +1,13 @@
-import { viewport } from "@tma.js/sdk-react";
+import useTelegramLogin from "@/hooks/useTelegramLogin";
+
+import { viewport, useRawInitData } from "@tma.js/sdk-react";
 import { Outlet } from "react-router";
 
 export default function MainLayout() {
   const { top, right, bottom, left } = viewport.safeAreaInsets();
   const contentSafeAreaInsetTop = viewport.contentSafeAreaInsetTop();
+  const initDataRaw = useRawInitData();
+  useTelegramLogin(initDataRaw);
 
   return (
     <main

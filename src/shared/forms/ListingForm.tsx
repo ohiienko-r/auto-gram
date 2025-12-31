@@ -11,7 +11,6 @@ import {
   TYPEOF_TRANSPORT,
   TRANSPORT_OPTIONS,
   CAR_BRANDS_OPTIONS,
-  CAR_CONDITION,
   CAR_CONDITION_OPTIONS,
   CAR_ACCIDENT,
   CAR_ACCIDENT_OPTIONS,
@@ -37,7 +36,6 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ListingPhotosCarouselWithFileUpload from "@/components/ListingPhotosCarouselWithFileUpload";
@@ -80,7 +78,7 @@ export default function ListingForm() {
   });
 
   const handleAddPhoto = (photo: File) => [
-    append({ id: window.crypto.randomUUID(), photo }),
+    append({ id: globalThis.crypto.randomUUID(), photo }),
   ];
 
   return (
