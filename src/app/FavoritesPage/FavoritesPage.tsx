@@ -1,5 +1,5 @@
 import Title from "@/components/Title";
-import AdvertisementCard from "@/components/AdvertisementCard";
+import AdvertisementCard from "@/components/CarListingCard";
 import FavoritesEmpty from "./components/FavoritesEmpty";
 // TODO: mock
 const data: string[] = [];

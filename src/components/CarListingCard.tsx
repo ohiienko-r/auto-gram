@@ -3,10 +3,10 @@ import { ROUTES_NAMES } from "@/constants/router";
 
 import { formatDistanceToNowStrict } from "date-fns";
 import { uk } from "date-fns/locale";
+import type { CarListing } from "@/types/app";
 
 import { Card, CardContent } from "@/components/Card";
-// TODO: remove this import as well as file
-import TempCar from "@/assets/temp_car.png";
+import ListingPhotosCarousel from "./ListingPhotoCarousel";
 
 import HeartIcon from "@/icons/HeartIcon";
 import SpeedometerIcon from "@/icons/SpeedometerIcon";
@@ -14,26 +14,35 @@ import TransmissionIcon from "@/icons/TransmissionIcon";
 import GeoPinIcon from "@/icons/GeoPinIcon";
 import FireIcon from "@/icons/FireIcon";
 
-export default function AdvertisementCard() {
-  // Pass the id of an add to the link
+export default function CarListingCard({
+  id,
+  brand,
+  model,
+  price,
+  mileage,
+  settlement,
+  fuel_type,
+  gearbox,
+  files,
+  created_at,
+}: CarListing) {
+  console.log(files);
   return (
-    <Link to={`${ROUTES_NAMES.DETAILS}/${1}`}>
+    <Link to={`${ROUTES_NAMES.DETAILS}/${id}`}>
       <Card>
-        <img
-          src={TempCar}
-          alt="Transport photo"
-          className="rounded-2xl w-full h-auto max-h-[200px] object-cover"
-        />
+        <ListingPhotosCarousel data={files} />
 
         <CardContent className="gap-5 py-3">
           <div className="flex justify-between items-start">
             <div className="flex-col gap-1 fex">
               {/* Add title (car name) */}
-              <h2 className="font-semibold text-2xl">BMW X4 35i III</h2>
+              <h2 className="font-semibold text-2xl">
+                {brand} {model}
+              </h2>
 
               <p className="inline-flex items-center gap-2 font-semibold text-base">
                 {/* Price in USD */}
-                <span className="text-primary">15 500$</span>
+                <span className="text-primary">{price}$</span>
 
                 {/* Price in UAH */}
                 <span className="text-black/60">645 000 грн</span>
@@ -52,7 +61,7 @@ export default function AdvertisementCard() {
 
                 <div>
                   <p className="font-semibold text-black/60 text-xs">Пробіг</p>
-                  <p className="font-medium text-base">170тис. км</p>
+                  <p className="font-medium text-base">{mileage}тис. км</p>
                 </div>
               </div>
 
@@ -61,7 +70,7 @@ export default function AdvertisementCard() {
 
                 <div>
                   <p className="font-semibold text-black/60 text-xs">Коробка</p>
-                  <p className="font-medium text-base">Автомат</p>
+                  <p className="font-medium text-base">{gearbox}</p>
                 </div>
               </div>
 
@@ -70,7 +79,7 @@ export default function AdvertisementCard() {
 
                 <div>
                   <p className="font-semibold text-black/60 text-xs">Місто</p>
-                  <p className="font-medium text-base">Харків</p>
+                  <p className="font-medium text-base">{settlement}</p>
                 </div>
               </div>
 
@@ -79,13 +88,13 @@ export default function AdvertisementCard() {
 
                 <div>
                   <p className="font-semibold text-black/60 text-xs">Паливо</p>
-                  <p className="font-medium text-base">Бензин</p>
+                  <p className="font-medium text-base">{fuel_type}</p>
                 </div>
               </div>
             </div>
 
             <p className="font-medium text-black/60 text-sm">
-              {formatDistanceToNowStrict(new Date("2025-12-01T12:00:00Z"), {
+              {formatDistanceToNowStrict(new Date(created_at), {
                 addSuffix: true,
                 locale: uk,
               })}

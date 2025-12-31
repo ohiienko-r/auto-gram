@@ -114,6 +114,7 @@ export default function ListingPhotosCarouselWithFileUpload({
             >
               <img
                 src={item.photo}
+                alt=""
                 className="bg-primary/10 rounded-2xl size-full object-cover"
               />
             </CarouselItem>

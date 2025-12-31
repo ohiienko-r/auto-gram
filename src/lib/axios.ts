@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://0.0.0.0:8000",
+  // baseURL: import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000",
+  baseURL:
+    import.meta.env.VITE_API_URL ?? "https://7tt5472n-8000.euw.devtunnels.ms",
 });
 
 api.interceptors.request.use((config) => {
