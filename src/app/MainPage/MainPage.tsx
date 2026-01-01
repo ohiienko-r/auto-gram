@@ -2,18 +2,17 @@ import { useNavigate } from "react-router";
 import { ROUTES_NAMES } from "@/constants/router";
 import useListingSearch from "@/hooks/useListingSearch";
 
-import CarListingCard from "../../components/CarListingCard";
 import { Button } from "@/components/ui/button";
+import CarListingCard from "../../components/CarListingCard";
 import Logo from "@/components/Logo";
 import Navigation from "@/components/Navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import PlusIcon from "@/icons/PlusIcon";
 
 export default function MainPage() {
-  const { data } = useListingSearch();
+  const { data, isLoading } = useListingSearch();
   const navigate = useNavigate();
-
-  console.log(data);
 
   return (
     <section className="flex flex-col flex-1 gap-4 px-4 pt-5 overflow-hidden">
@@ -37,6 +36,11 @@ export default function MainPage() {
           {data?.results?.map((listing) => (
             <CarListingCard key={listing.id} {...listing} />
           ))}
+
+          {isLoading &&
+            Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
+            ))}
         </div>
       </section>
     </section>

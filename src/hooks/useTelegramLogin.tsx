@@ -19,7 +19,6 @@ export default function useTelegramLogin(initDataRaw: string | undefined) {
     if (!currentUser && data && !auth) {
       setAuth({ tokens: data.tokens });
       setCurrentUser({ user: data.user, created: data.created });
-      console.log(data);
     }
   }, [data, auth, currentUser]);
 

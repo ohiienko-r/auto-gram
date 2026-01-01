@@ -26,7 +26,6 @@ export default function CarListingCard({
   files,
   created_at,
 }: CarListing) {
-  console.log(files);
   return (
     <Link to={`${ROUTES_NAMES.DETAILS}/${id}`}>
       <Card>
@@ -35,17 +34,16 @@ export default function CarListingCard({
         <CardContent className="gap-5 py-3">
           <div className="flex justify-between items-start">
             <div className="flex-col gap-1 fex">
-              {/* Add title (car name) */}
               <h2 className="font-semibold text-2xl">
                 {brand} {model}
               </h2>
 
               <p className="inline-flex items-center gap-2 font-semibold text-base">
-                {/* Price in USD */}
                 <span className="text-primary">{price}$</span>
 
-                {/* Price in UAH */}
-                <span className="text-black/60">645 000 грн</span>
+                <span className="text-black/60">
+                  {Math.round(price * 42.34)} грн
+                </span>
               </p>
             </div>
 
