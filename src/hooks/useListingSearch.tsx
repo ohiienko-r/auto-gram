@@ -1,28 +1,30 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@/stores/auth-store";
-
+import { useInfiniteQuery } from "@tanstack/react-query";
 import searchService from "@/services/search-service";
 
-import type { AxiosError } from "axios";
-
 export default function useListingSearch(query?: string) {
-  const { auth } = useAuthStore();
-  const { data, isLoading, error, isError } = useQuery({
-    queryKey: ["listingsSearch"],
-    queryFn: () => searchService.search(query),
-    enabled: !!auth,
-  });
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ["listingsSearch", query],
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) =>
+        searchService.search({
+          query,
+          offset: pageParam,
+          limit: 2,
+        }),
+      getNextPageParam: (lastPage) => {
+        const { offset, limit, count } = lastPage;
 
-  useEffect(() => {
-    if (isError) {
-      console.error(
-        "Failed to get listings",
-        error.message,
-        (error as AxiosError)?.response?.data
-      );
-    }
-  }, [error, isError]);
+        const nextOffset = offset + limit;
+        return nextOffset < count ? nextOffset : undefined;
+      },
+    });
 
-  return { data, isLoading };
+  return {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
 }

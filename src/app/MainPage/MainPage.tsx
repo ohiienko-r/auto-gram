@@ -11,8 +11,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import PlusIcon from "@/icons/PlusIcon";
 
 export default function MainPage() {
-  const { data, isLoading } = useListingSearch();
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useListingSearch();
+
   const navigate = useNavigate();
+
+  const listings = data?.pages.flatMap((page) => page.results) ?? [];
 
   return (
     <section className="flex flex-col flex-1 gap-4 px-4 pt-5 overflow-hidden">
@@ -20,7 +24,7 @@ export default function MainPage() {
         <Logo />
 
         <Button
-          size={"icon-sm"}
+          size="icon-sm"
           onClick={() => navigate(ROUTES_NAMES.CREATE_LISTING)}
         >
           <PlusIcon />
@@ -33,15 +37,25 @@ export default function MainPage() {
         <h3 className="font-medium text-black/60 text-base">Рекомендуємо</h3>
 
         <div className="flex flex-col gap-5">
-          {data?.results?.map((listing) => (
+          {listings.map((listing) => (
             <CarListingCard key={listing.id} {...listing} />
           ))}
 
-          {isLoading &&
-            Array.from({ length: 3 }).map((_, index) => (
+          {(isLoading || isFetchingNextPage) &&
+            Array.from({ length: 2 }).map((_, index) => (
               <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
             ))}
         </div>
+
+        {hasNextPage && (
+          <Button
+            variant="ghost"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            Завантажити ще
+          </Button>
+        )}
       </section>
     </section>
   );

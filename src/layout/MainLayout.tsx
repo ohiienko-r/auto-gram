@@ -1,13 +1,18 @@
 import useTelegramLogin from "@/hooks/useTelegramLogin";
-
 import { viewport, useRawInitData } from "@tma.js/sdk-react";
 import { Outlet } from "react-router";
+
+import SplashScreen from "@/components/SplashScreen";
 
 export default function MainLayout() {
   const { top, right, bottom, left } = viewport.safeAreaInsets();
   const contentSafeAreaInsetTop = viewport.contentSafeAreaInsetTop();
   const initDataRaw = useRawInitData();
-  useTelegramLogin(initDataRaw);
+  const { isLoading } = useTelegramLogin(initDataRaw);
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
 
   return (
     <main

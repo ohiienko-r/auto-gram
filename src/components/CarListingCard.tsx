@@ -29,7 +29,15 @@ export default function CarListingCard({
   return (
     <Link to={`${ROUTES_NAMES.DETAILS}/${id}`}>
       <Card>
-        <ListingPhotosCarousel data={files} />
+        {/* TODO: remove this map of files. This is for DEV purposes only */}
+        <ListingPhotosCarousel
+          data={files.map((file) =>
+            file.replace(
+              "http://localhost:8000",
+              "https://7tt5472n-8000.euw.devtunnels.ms"
+            )
+          )}
+        />
 
         <CardContent className="gap-5 py-3">
           <div className="flex justify-between items-start">
