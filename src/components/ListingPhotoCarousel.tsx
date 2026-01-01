@@ -24,7 +24,7 @@ export default function ListingPhotosCarousel({
             </CarouselItem>
           ))}
           {(data?.length === 0 || !data) && (
-            <CarouselItem>
+            <CarouselItem className="rounded-2xl h-[220px] overflow-hidden select-none">
               <img
                 src="https://placehold.co/375x200?text=?"
                 alt=""

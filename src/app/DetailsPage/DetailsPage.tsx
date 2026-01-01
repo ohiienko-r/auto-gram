@@ -24,10 +24,10 @@ export default function DetailsPage() {
       </header>
 
       <div className="flex flex-col gap-6">
-        {isLoading ? (
-          <Skeleton className="rounded-2xl w-full h-[768px]" />
-        ) : (
-          <Card>
+        <Card>
+          {isLoading ? (
+            <Skeleton className="rounded-2xl w-full h-[220px]" />
+          ) : (
             <ListingPhotosCarousel
               data={data?.files.map((file) =>
                 file.replace(
@@ -36,14 +36,22 @@ export default function DetailsPage() {
                 )
               )}
             />
+          )}
 
-            <CardContent className="gap-6 py-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-col gap-1 fex">
+          <CardContent className="gap-6 py-3">
+            <div className="flex justify-between items-start">
+              <div className="flex-col gap-1 fex">
+                {isLoading ? (
+                  <Skeleton className="rounded-md w-40 h-8" />
+                ) : (
                   <h2 className="font-semibold text-2xl">
                     {data?.brand} {data?.model}
                   </h2>
+                )}
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-40 h-6" />
+                ) : (
                   <p className="inline-flex items-center gap-2 font-semibold text-base">
                     <span className="text-primary">{data?.price}$</span>
 
@@ -51,82 +59,114 @@ export default function DetailsPage() {
                       {Math.round(data?.price ?? 0 * 42.34)} грн
                     </span>
                   </p>
-                </div>
-
-                <button className="group size-6 cursor-pointer">
-                  <HeartIcon />
-                </button>
+                )}
               </div>
 
-              <section className="flex flex-col gap-4">
-                <div className="gap-4 grid grid-cols-2">
-                  <div className="flex items-center gap-3 col-span-2">
-                    <GeoPinIcon />
+              <button className="group size-6 cursor-pointer">
+                <HeartIcon />
+              </button>
+            </div>
 
-                    <div className="font-medium text-base">
-                      <p className="text-black/60">Місто</p>
+            <section className="flex flex-col gap-4">
+              <div className="gap-4 grid grid-cols-2">
+                <div className="flex items-center gap-3 col-span-2">
+                  <GeoPinIcon />
+
+                  <div className="font-medium text-base">
+                    <p className="text-black/60">Місто</p>
+                    {isLoading ? (
+                      <Skeleton className="rounded-sm w-10 h-6" />
+                    ) : (
                       <p>{data?.settlement}</p>
-                    </div>
+                    )}
                   </div>
+                </div>
 
-                  <div className="flex items-center gap-3">
-                    <SpeedometerIcon />
+                <div className="flex items-center gap-3">
+                  <SpeedometerIcon />
 
-                    <div className="font-medium text-base">
-                      <p className="text-black/60">Пробіг</p>
+                  <div className="font-medium text-base">
+                    <p className="text-black/60">Пробіг</p>
+                    {isLoading ? (
+                      <Skeleton className="rounded-sm w-10 h-6" />
+                    ) : (
                       <p>{data?.mileage} тис. км</p>
-                    </div>
+                    )}
                   </div>
+                </div>
 
-                  <div className="flex items-center gap-3">
-                    <TransmissionIcon />
+                <div className="flex items-center gap-3">
+                  <TransmissionIcon />
 
-                    <div className="font-medium text-base">
-                      <p className="text-black/60">Коробка</p>
+                  <div className="font-medium text-base">
+                    <p className="text-black/60">Коробка</p>
+                    {isLoading ? (
+                      <Skeleton className="rounded-sm w-10 h-6" />
+                    ) : (
                       <p>{data?.gearbox}</p>
-                    </div>
+                    )}
                   </div>
                 </div>
+              </div>
 
-                <div className="flex flex-col gap-1.5 font-medium text-base">
-                  <h3 className="text-black/60">Опис</h3>
+              <div className="flex flex-col gap-1.5 font-medium text-base">
+                <h3 className="text-black/60">Опис</h3>
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-full h-6" />
+                ) : (
                   <p>-</p>
-                </div>
+                )}
+              </div>
 
-                <div className="flex flex-col gap-1.5 font-medium text-base">
-                  <h3 className="text-black/60">Двигун</h3>
+              <div className="flex flex-col gap-1.5 font-medium text-base">
+                <h3 className="text-black/60">Двигун</h3>
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-10 h-6" />
+                ) : (
                   <p>{data?.engine_capacity_l} л.</p>
-                </div>
+                )}
+              </div>
 
-                <div className="flex flex-col gap-1.5 font-medium text-base">
-                  <h3 className="text-black/60">Колір</h3>
+              <div className="flex flex-col gap-1.5 font-medium text-base">
+                <h3 className="text-black/60">Колір</h3>
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-10 h-6" />
+                ) : (
                   <p>-</p>
-                </div>
+                )}
+              </div>
 
-                <div className="flex flex-col gap-1.5 font-medium text-base">
-                  <h3 className="text-black/60">Матеріал салону</h3>
+              <div className="flex flex-col gap-1.5 font-medium text-base">
+                <h3 className="text-black/60">Матеріал салону</h3>
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-10 h-6" />
+                ) : (
                   <p>{data?.salon_material}</p>
-                </div>
+                )}
+              </div>
 
-                {/* <div className="flex flex-col gap-1.5 font-medium text-base">
+              {/* <div className="flex flex-col gap-1.5 font-medium text-base">
                 <h3 className="text-black/60">Безпека</h3>
 
                 <p>Шкіра</p>
               </div> */}
 
-                <div className="flex flex-col gap-1.5 font-medium text-base">
-                  <h3 className="text-black/60">Стан</h3>
+              <div className="flex flex-col gap-1.5 font-medium text-base">
+                <h3 className="text-black/60">Стан</h3>
 
+                {isLoading ? (
+                  <Skeleton className="rounded-sm w-10 h-6" />
+                ) : (
                   <p>{data?.condition}</p>
-                </div>
-              </section>
-            </CardContent>
-          </Card>
-        )}
+                )}
+              </div>
+            </section>
+          </CardContent>
+        </Card>
 
         {isLoading ? (
           <Skeleton className="rounded-2xl w-full h-[200px]" />
