@@ -9,4 +9,8 @@ export default {
     const { data } = await api.get(`${this.BASE_URL}${id}/`);
     return data;
   },
+
+  async toggleListingLike(id: number): Promise<void> {
+    await api.post(`${this.BASE_URL}${id}/like/`);
+  },
 };

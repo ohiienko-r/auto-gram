@@ -16,7 +16,6 @@ import TelegramOutlineIcon from "@/icons/TelegramOutlineIcon";
 export default function DetailsPage() {
   const { id } = useParams();
   const { data, isLoading } = useListingDetails(id);
-  console.log(data);
 
   return (
     <section className="flex flex-col gap-4 px-4 pt-5 overflow-y-auto">
@@ -55,7 +54,7 @@ export default function DetailsPage() {
                 </div>
 
                 <button className="group size-6 cursor-pointer">
-                  <HeartIcon className="fill-primary" />
+                  <HeartIcon />
                 </button>
               </div>
 

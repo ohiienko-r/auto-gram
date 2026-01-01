@@ -56,7 +56,7 @@ export default function CarListingCard({
             </div>
 
             <button className="group size-6 cursor-pointer">
-              <HeartIcon className="fill-primary" />
+              <HeartIcon />
             </button>
           </div>
 

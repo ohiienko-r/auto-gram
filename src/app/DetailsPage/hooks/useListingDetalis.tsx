@@ -7,7 +7,7 @@ import { type AxiosError } from "axios";
 
 export default function useListingDetails(id: number | string | undefined) {
   const { data, isLoading, error, isError } = useQuery({
-    queryKey: ["listing-details", id],
+    queryKey: ["listingDetails", id],
     queryFn: () => listingService.getListingDetails(Number(id)),
     enabled: !!id,
   });
