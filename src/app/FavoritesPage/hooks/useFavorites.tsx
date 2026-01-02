@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import searchService from "@/services/search-service";
+import listingService from "@/services/listing-service";
 
 import type { AxiosError } from "axios";
 
-export default function useListingSearch(query?: string) {
+export default function useFavorites() {
   const {
     data,
     isLoading,
@@ -14,14 +14,10 @@ export default function useListingSearch(query?: string) {
     error,
     isError,
   } = useInfiniteQuery({
-    queryKey: ["listingsSearch", query],
+    queryKey: ["favorites"],
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
-      searchService.search({
-        query,
-        offset: pageParam,
-        limit: 2,
-      }),
+      listingService.getFavorites({ offset: pageParam, limit: 2 }),
     getNextPageParam: (lastPage) => {
       const { offset, limit, count } = lastPage;
 

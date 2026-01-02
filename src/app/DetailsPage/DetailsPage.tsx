@@ -1,5 +1,6 @@
 import { useParams } from "react-router";
-import useListingDetails from "./hooks/useListingDetalis";
+import useListingDetails from "./hooks/useListingDetails";
+import useToggleListingLike from "@/hooks/useToggleListingLike";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -12,10 +13,12 @@ import SpeedometerIcon from "@/icons/SpeedometerIcon";
 import TransmissionIcon from "@/icons/TransmissionIcon";
 import GeoPinIcon from "@/icons/GeoPinIcon";
 import TelegramOutlineIcon from "@/icons/TelegramOutlineIcon";
+import { LoaderCircle } from "lucide-react";
 
 export default function DetailsPage() {
   const { id } = useParams();
   const { data, isLoading } = useListingDetails(id);
+  const { mutate, isPending } = useToggleListingLike();
 
   return (
     <section className="flex flex-col gap-4 px-4 pt-5 overflow-y-auto">
@@ -62,8 +65,20 @@ export default function DetailsPage() {
                 )}
               </div>
 
-              <button className="group size-6 cursor-pointer">
-                <HeartIcon />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  mutate(Number(id));
+                }}
+                className="group size-6 cursor-pointer"
+              >
+                {isPending ? (
+                  <LoaderCircle className="size-6 text-primary animate-spin" />
+                ) : (
+                  <HeartIcon />
+                )}
               </button>
             </div>
 

@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import listingService from "@/services/listing-service";
 
+import type { AxiosError } from "axios";
+
 export default function useToggleListingLike() {
   const queryClient = useQueryClient();
 
@@ -12,8 +14,12 @@ export default function useToggleListingLike() {
       await queryClient.invalidateQueries({ queryKey: ["listingsSearch"] });
       await queryClient.invalidateQueries({ queryKey: ["listingDetails"] });
     },
-    onError: (error) => {
-      console.error("Error toggling listing like:", error);
+    onError: (error: AxiosError) => {
+      console.error(
+        "Error toggling listing like:",
+        error?.message,
+        error?.response?.data
+      );
     },
   });
 

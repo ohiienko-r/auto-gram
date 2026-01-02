@@ -1,3 +1,5 @@
+import useToggleListingLike from "@/hooks/useToggleListingLike";
+
 import { Link } from "react-router";
 import { ROUTES_NAMES } from "@/constants/router";
 
@@ -13,6 +15,7 @@ import SpeedometerIcon from "@/icons/SpeedometerIcon";
 import TransmissionIcon from "@/icons/TransmissionIcon";
 import GeoPinIcon from "@/icons/GeoPinIcon";
 import FireIcon from "@/icons/FireIcon";
+import { LoaderCircle } from "lucide-react";
 
 export default function CarListingCard({
   id,
@@ -26,6 +29,8 @@ export default function CarListingCard({
   files,
   created_at,
 }: CarListing) {
+  const { mutate, isPending } = useToggleListingLike();
+
   return (
     <Link to={`${ROUTES_NAMES.DETAILS}/${id}`}>
       <Card>
@@ -55,8 +60,20 @@ export default function CarListingCard({
               </p>
             </div>
 
-            <button className="group size-6 cursor-pointer">
-              <HeartIcon />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                mutate(id);
+              }}
+              className="group size-6 cursor-pointer"
+            >
+              {isPending ? (
+                <LoaderCircle className="size-6 text-primary animate-spin" />
+              ) : (
+                <HeartIcon />
+              )}
             </button>
           </div>
 
