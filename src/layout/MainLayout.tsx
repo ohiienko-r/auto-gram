@@ -1,4 +1,5 @@
 import useTelegramLogin from "@/hooks/useTelegramLogin";
+import FiltersProvider from "@/providers/FiltersProvider";
 import { viewport, useRawInitData } from "@tma.js/sdk-react";
 import { Outlet } from "react-router";
 
@@ -8,7 +9,7 @@ export default function MainLayout() {
   const { top, right, bottom, left } = viewport.safeAreaInsets();
   const contentSafeAreaInsetTop = viewport.contentSafeAreaInsetTop();
   const initDataRaw = useRawInitData();
-  const { isLoading } = useTelegramLogin(initDataRaw);
+  const { data, isLoading } = useTelegramLogin(initDataRaw);
 
   if (isLoading) {
     return <SplashScreen />;
@@ -29,7 +30,9 @@ export default function MainLayout() {
         scrollbarWidth: "none",
       }}
     >
-      <Outlet />
+      <FiltersProvider enabled={!!data?.tokens?.access}>
+        <Outlet />
+      </FiltersProvider>
     </main>
   );
 }
