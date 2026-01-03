@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useFiltersStore } from "@/stores/filters-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { viewport } from "@tma.js/sdk-react";
 
@@ -46,13 +47,14 @@ import "react-range-slider-input/dist/style.css";
 import Multiselect from "@/components/Multiselect";
 
 export default function SearchForm() {
+  const { commonFilters, regions, brands } = useFiltersStore();
   const { bottom } = viewport.safeAreaInsets();
+
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(SearchFormValidationSchema),
     defaultValues: {
       priceRange: [0, 75],
       possibleBargain: false,
-      typeofTransport: TYPEOF_TRANSPORT.ALL,
       carBrands: [],
       carModels: [],
       condition: CAR_CONDITION.ALL,
@@ -64,17 +66,19 @@ export default function SearchForm() {
       suspension: SUSPENSION_TYPE.PARTIAL,
       driveType: DRIVE_TYPE.FWD,
       carCountries: [],
-      productionYearFrom: 2000,
-      productionYearTo: new Date().getFullYear(),
-      kilometrageFrom: 0,
-      kilometrageTo: 150000,
-      noKilometrage: false,
+      productionYearFrom: commonFilters?.ranges?.year?.min,
+      productionYearTo: commonFilters?.ranges?.year?.max,
+      milageFrom: commonFilters?.ranges?.mileage?.min,
+      milageTo: commonFilters?.ranges?.mileage?.max,
+      noMilage: false,
     },
   });
 
   const { control, watch, setValue, reset, handleSubmit } = form;
 
-  const [noKilometrage] = watch(["noKilometrage"]);
+  const [noMilage] = watch(["noMilage"]);
+
+  console.log("commonFilters", commonFilters);
 
   return (
     <Form {...form}>
@@ -161,7 +165,7 @@ export default function SearchForm() {
 
         <FormField
           control={control}
-          name="typeofTransport"
+          name="typeOfCar"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Тип траспорта</FormLabel>
@@ -169,13 +173,17 @@ export default function SearchForm() {
               <FormControl>
                 <ToggleGroup
                   type="single"
-                  value={field.value}
-                  onValueChange={field.onChange}
+                  value={String(field.value)}
+                  onValueChange={(val) => {
+                    if (!Number.isNaN(val)) {
+                      field.onChange(Number(val));
+                    }
+                  }}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {TRANSPORT_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
-                      {option.label}
+                  {commonFilters?.type_of_car.map((option) => (
+                    <ToggleGroupItem key={option.id} value={String(option.id)}>
+                      {option.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
@@ -193,9 +201,12 @@ export default function SearchForm() {
 
               <Multiselect
                 listTitle="Марка"
-                options={CAR_BRANDS_OPTIONS}
+                options={brands ?? []}
                 value={field.value ?? []}
-                onChange={field.onChange}
+                onChange={(val) => {
+                  console.log(val);
+                  field.onChange(val);
+                }}
               />
             </FormItem>
           )}
@@ -232,9 +243,9 @@ export default function SearchForm() {
                   onValueChange={field.onChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {CAR_CONDITION_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
-                      {option.label}
+                  {commonFilters?.condition?.map((option) => (
+                    <ToggleGroupItem key={option.id} value={String(option.id)}>
+                      {option.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
@@ -282,9 +293,9 @@ export default function SearchForm() {
                   onValueChange={field.onChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {FUEL_TYPE_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
-                      {option.label}
+                  {commonFilters?.fuel_type?.map((option) => (
+                    <ToggleGroupItem key={option.id} value={String(option.id)}>
+                      {option.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
@@ -307,9 +318,9 @@ export default function SearchForm() {
                   onValueChange={field.onChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {TRANSMISSION_TYPE_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
-                      {option.label}
+                  {commonFilters?.gearbox?.map((option) => (
+                    <ToggleGroupItem key={option.id} value={String(option.id)}>
+                      {option.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
@@ -327,7 +338,7 @@ export default function SearchForm() {
 
               <Multiselect
                 listTitle="Регіон"
-                options={REGIONS_OPTIONS}
+                options={regions ?? []}
                 value={field.value ?? []}
                 onChange={field.onChange}
               />
@@ -349,9 +360,9 @@ export default function SearchForm() {
                   onValueChange={field.onChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {BODY_TYPE_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
-                      {option.label}
+                  {commonFilters?.body_type.map((option) => (
+                    <ToggleGroupItem key={option.id} value={String(option.id)}>
+                      {option.name}
                     </ToggleGroupItem>
                   ))}
                 </ToggleGroup>
@@ -399,8 +410,11 @@ export default function SearchForm() {
                   onValueChange={field.onChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  {DRIVE_TYPE_OPTIONS.map((option) => (
-                    <ToggleGroupItem key={option.value} value={option.value}>
+                  {commonFilters?.drive_type.map((option) => (
+                    <ToggleGroupItem
+                      key={option.value}
+                      value={String(option.value)}
+                    >
                       {option.label}
                     </ToggleGroupItem>
                   ))}
@@ -436,7 +450,12 @@ export default function SearchForm() {
                 <FormLabel>Рік виробництва</FormLabel>
 
                 <FormControl>
-                  <Input {...field} placeholder="Від" type="number" />
+                  <Input
+                    {...field}
+                    placeholder="Від"
+                    type="number"
+                    min={commonFilters?.ranges?.year?.min}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -448,7 +467,12 @@ export default function SearchForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input {...field} placeholder="До" type="number" />
+                  <Input
+                    {...field}
+                    placeholder="До"
+                    type="number"
+                    max={commonFilters?.ranges?.year?.max}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -458,7 +482,7 @@ export default function SearchForm() {
         <div className="items-end gap-3 grid grid-cols-2">
           <FormField
             control={control}
-            name="kilometrageFrom"
+            name="milageFrom"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Пробіг (тис км)</FormLabel>
@@ -467,8 +491,9 @@ export default function SearchForm() {
                   <Input
                     {...field}
                     placeholder="Від"
-                    disabled={noKilometrage}
+                    disabled={noMilage}
                     type="number"
+                    min={commonFilters?.ranges?.mileage?.min}
                   />
                 </FormControl>
               </FormItem>
@@ -477,15 +502,16 @@ export default function SearchForm() {
 
           <FormField
             control={control}
-            name="kilometrageTo"
+            name="milageTo"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <Input
                     {...field}
                     placeholder="До"
-                    disabled={noKilometrage}
+                    disabled={noMilage}
                     type="number"
+                    max={commonFilters?.ranges?.mileage?.max}
                   />
                 </FormControl>
               </FormItem>
@@ -494,7 +520,7 @@ export default function SearchForm() {
 
           <FormField
             control={control}
-            name="noKilometrage"
+            name="noMilage"
             render={({ field }) => (
               <FormItem className="justify-items-start">
                 <FormControl>
@@ -504,8 +530,8 @@ export default function SearchForm() {
                       field.onChange(val);
 
                       if (val) {
-                        setValue("kilometrageFrom", undefined);
-                        setValue("kilometrageTo", undefined);
+                        setValue("milageFrom", undefined);
+                        setValue("milageTo", undefined);
                       }
                     }}
                   >

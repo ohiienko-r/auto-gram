@@ -18,7 +18,12 @@ export default function useBrands({ enabled = true }: { enabled: boolean }) {
 
   useEffect(() => {
     if (data) {
-      setBrands(data);
+      const brandsOptions = data.map((item) => ({
+        value: String(item.id),
+        label: item.name,
+      }));
+
+      setBrands(brandsOptions);
     }
   }, [data]);
 

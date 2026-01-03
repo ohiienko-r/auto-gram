@@ -1,16 +1,17 @@
 import { create } from "zustand";
 
-import type { CommonFilters, FilterLookup } from "@/types/filters";
+import type { CommonFilters } from "@/types/filters";
+import type { Option } from "@/types/app";
 
 interface FiltersStore {
   commonFilters: CommonFilters | null;
   setCommonFilters: (val: CommonFilters | null) => void;
 
-  regions: FilterLookup[] | null;
-  setRegions: (val: FilterLookup[] | null) => void;
+  regions: Option[] | null;
+  setRegions: (val: Option[] | null) => void;
 
-  brands: FilterLookup[] | null;
-  setBrands: (val: FilterLookup[] | null) => void;
+  brands: Option[] | null;
+  setBrands: (val: Option[] | null) => void;
 }
 
 export const useFiltersStore = create<FiltersStore>((set) => ({

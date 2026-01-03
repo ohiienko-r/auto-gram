@@ -18,7 +18,11 @@ export default function useRegions({ enabled = true }: { enabled: boolean }) {
 
   useEffect(() => {
     if (data) {
-      setRegions(data);
+      const regionsOptions = data.map((item) => ({
+        value: String(item.id),
+        label: item.name,
+      }));
+      setRegions(regionsOptions);
     }
   }, [data]);
 

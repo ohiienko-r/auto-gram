@@ -82,6 +82,7 @@ export default function Multiselect({
           aria-describedby={undefined}
           className="size-full"
           style={{ paddingBottom: bottom }}
+          onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <DialogHeader>
             <DialogTitle>{listTitle}</DialogTitle>
@@ -90,7 +91,7 @@ export default function Multiselect({
           <div className="flex flex-col flex-1 justify-start bg-white pb-4 rounded-b-2xl max-h-[calc(100%-76px)] overflow-hidden">
             <div className="relative">
               {!filter && (
-                <div className="top-0 left-4 absolute flex items-center gap-2.5 h-full">
+                <div className="top-0 left-4 z-0 absolute flex items-center gap-2.5 h-full pointer-events-none select-none">
                   <span className="font-medium text-black text-base">
                     Пошук
                   </span>
@@ -103,9 +104,7 @@ export default function Multiselect({
                 type="text"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="py-2 pr-10 pl-4 border border-t-primary/60 border-b-primary/60 outline-none w-full placeholder:font-light font-medium placeholder:text-black/60 text-base caret-black/60"
-                placeholder="Пошук"
-                autoFocus={false}
+                className="z-1 py-2 pr-10 pl-4 border border-t-primary/60 border-b-primary/60 outline-none w-full placeholder:font-light font-medium placeholder:text-black/60 text-base caret-black/60"
               />
 
               <button
@@ -137,8 +136,8 @@ export default function Multiselect({
                 </li>
               ))}
 
-              {(!options || !options?.length) && (
-                <li className="font-medium text-grey text-center">
+              {(!currentOptions || currentOptions.length === 0) && (
+                <li className="font-medium text-gray-500 text-center">
                   Нема результаів
                 </li>
               )}

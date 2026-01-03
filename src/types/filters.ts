@@ -22,7 +22,7 @@ export interface CommonFilters {
   gearbox: FilterLookup[];
   ranges: {
     engine_capacity_l: { unit: string } & RangeFilter;
-    milage: { unit: string } & RangeFilter;
+    mileage: { unit: string } & RangeFilter;
     price: { currency: string } & RangeFilter;
     year: RangeFilter;
   };

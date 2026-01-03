@@ -2,9 +2,9 @@ import * as z from "zod";
 
 export const SearchFormValidationSchema = z
   .object({
-    priceRange: z.tuple([z.number(), z.number()]),
+    priceRange: z.tuple([z.number().min(0), z.number().min(0)]),
     possibleBargain: z.boolean(),
-    typeofTransport: z.string(),
+    typeOfCar: z.number(),
     carBrands: z.array(z.string()),
     carModels: z.array(z.string()),
     condition: z.string(),
@@ -16,11 +16,12 @@ export const SearchFormValidationSchema = z
     suspension: z.string(),
     driveType: z.string(),
     carCountries: z.array(z.string()),
-    productionYearFrom: z.number(),
-    productionYearTo: z.number(),
-    kilometrageFrom: z.number(),
-    kilometrageTo: z.number(),
-    noKilometrage: z.boolean(),
+    // TODO: set here the data from common filters
+    productionYearFrom: z.number().min(1960),
+    productionYearTo: z.number().max(2026),
+    milageFrom: z.number(),
+    milageTo: z.number(),
+    noMilage: z.boolean(),
   })
   .partial();
 
