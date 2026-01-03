@@ -67,11 +67,7 @@ export default function DetailsPage() {
 
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  mutate(Number(id));
-                }}
+                onClick={() => mutate(Number(id))}
                 className="group size-6 cursor-pointer"
               >
                 {isPending ? (

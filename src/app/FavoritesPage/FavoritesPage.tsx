@@ -40,7 +40,7 @@ export default function FavoritesPage() {
 
             {hasNextPage && (
               <Button
-                variant="ghost"
+                variant="link"
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
               >

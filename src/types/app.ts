@@ -36,3 +36,19 @@ export interface CarListing {
   files: string[];
   created_at: string;
 }
+
+export interface MyCarListing {
+  id: number;
+  status: string;
+  title: string;
+  price: number;
+  price_uah: number;
+  created_at: string;
+  created_ago: string;
+  cover: string;
+  views: {
+    last_24h: number;
+    last_7d: number;
+    all_time: number;
+  };
+}

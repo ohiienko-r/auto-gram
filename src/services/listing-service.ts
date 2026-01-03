@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 
-import type { CarListing, PaginatedResponse } from "@/types/app";
+import type { CarListing, PaginatedResponse, MyCarListing } from "@/types/app";
 
 export default {
   BASE_URL: "/api/tg/cars/",
@@ -20,5 +20,17 @@ export default {
   }): Promise<PaginatedResponse<CarListing>> {
     const { data } = await api.get(`${this.BASE_URL}likes/`, { params });
     return data;
+  },
+
+  async getMyListings(params?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<PaginatedResponse<MyCarListing>> {
+    const { data } = await api.get(`${this.BASE_URL}mycars/`, { params });
+    return data;
+  },
+
+  async removeMyListing(id: number): Promise<void> {
+    await api.delete(`${this.BASE_URL}${id}/remove/`);
   },
 };

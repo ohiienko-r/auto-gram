@@ -49,7 +49,7 @@ export default function MainPage() {
 
         {hasNextPage && (
           <Button
-            variant="ghost"
+            variant="link"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
