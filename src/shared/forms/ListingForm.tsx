@@ -1,32 +1,16 @@
+import { useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useFiltersStore } from "@/stores/filters-store";
+import useModels from "@/hooks/filters/useModels";
+import useSettlements from "@/hooks/filters/useSettlements";
+import useCreateListing from "@/app/CreateListingPage/hooks/useCreateListing";
 import { viewport } from "@tma.js/sdk-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ListingFormSchema,
   type ListingFormValues,
 } from "../validation/validation";
-
-import {
-  TYPEOF_TRANSPORT,
-  TRANSPORT_OPTIONS,
-  CAR_BRANDS_OPTIONS,
-  CAR_CONDITION_OPTIONS,
-  CAR_ACCIDENT,
-  CAR_ACCIDENT_OPTIONS,
-  FUEL_TYPE,
-  FUEL_TYPE_OPTIONS,
-  TRANSMISSION_TYPE,
-  TRANSMISSION_TYPE_OPTIONS,
-  REGIONS_OPTIONS,
-  BODY_TYPE,
-  BODY_TYPE_OPTIONS,
-  SUSPENSION_TYPE,
-  SUSPENSION_TYPE_OPTIONS,
-  DRIVE_TYPE,
-  DRIVE_TYPE_OPTIONS,
-  CAR_COUNTRIES_OPTIONS,
-} from "@/constants/transport";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -36,6 +20,7 @@ import {
   FormItem,
   FormLabel,
   FormControl,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ListingPhotosCarouselWithFileUpload from "@/components/ListingPhotosCarouselWithFileUpload";
@@ -44,32 +29,47 @@ import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
+import { LoaderCircle } from "lucide-react";
 
 export default function ListingForm() {
+  const { commonFilters, regions, brands } = useFiltersStore();
+  const { mutate, isPending, isUploadingPhotos } = useCreateListing();
   const { bottom } = viewport.safeAreaInsets();
+  const navigate = useNavigate();
+
   const form = useForm<ListingFormValues>({
     resolver: zodResolver(ListingFormSchema),
     defaultValues: {
       photos: [],
-      priceUsd: "0",
-      priceUah: "0",
-      possibleBargain: false,
-      typeofTransport: TYPEOF_TRANSPORT.PASSENGER,
-      kilometrage: "0",
-      noKilometrage: false,
-      carAccident: CAR_ACCIDENT.NO,
-      fuelType: FUEL_TYPE.PETROL,
-      transmission: TRANSMISSION_TYPE.MANUAL,
-      bodyType: BODY_TYPE.SEDAN,
-      suspension: SUSPENSION_TYPE.FULL,
-      driveType: DRIVE_TYPE.FWD,
+      brand: null,
+      model: null,
+      region: null,
+      settlement: null,
+      year: null,
+      price: "",
+      bargaining: false,
+      condition: 1,
+      mileage: "",
+      engine_capacity_l: "",
+      drive_type: "",
+      noMileage: false,
+      vin_number: "",
     },
   });
-  const navigate = useNavigate();
 
-  const { control, watch, setValue } = form;
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
-  const noKilometrage = watch("noKilometrage");
+  const [carBrand, noMilage, region] = watch(["brand", "noMileage", "region"]);
+
+  const { data: models, isLoading: isModelsLoading } = useModels(carBrand);
+  const { data: settlements, isLoading: isSettlementsLoading } =
+    useSettlements(region);
 
   const { fields, append, remove } = useFieldArray({
     control: control,
@@ -81,95 +81,134 @@ export default function ListingForm() {
     append({ id: globalThis.crypto.randomUUID(), photo }),
   ];
 
+  const carBrandModels = useMemo(
+    () =>
+      models?.map((model) => ({
+        label: model.name,
+        value: String(model.id),
+      })) || [],
+    [models]
+  );
+
+  const settlementsOptions = useMemo(
+    () =>
+      settlements?.map((settlement) => ({
+        label: settlement.name,
+        value: String(settlement.id),
+      })) || [],
+    [settlements]
+  );
+
+  const productionYearOptions = useMemo(() => {
+    const startYear = commonFilters?.ranges?.year?.min || 1960;
+    const endYear =
+      commonFilters?.ranges?.year?.max || new Date().getFullYear();
+
+    if (startYear === undefined || endYear === undefined) {
+      return [];
+    }
+
+    const years = [];
+
+    for (let i = startYear; i <= endYear; i++) {
+      years.push({
+        label: String(i),
+        value: String(i),
+      });
+    }
+    return years;
+  }, [commonFilters]);
+
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
       <Form {...form}>
         <form id="listing-form" className="flex flex-col gap-8">
-          <ListingPhotosCarouselWithFileUpload
-            data={fields}
-            onPhotoAdd={handleAddPhoto}
-            onPhotoRemove={remove}
-          />
+          <div className="flex flex-col gap-2">
+            <ListingPhotosCarouselWithFileUpload
+              data={fields}
+              onPhotoAdd={handleAddPhoto}
+              onPhotoRemove={remove}
+            />
+
+            {errors.photos && (
+              <FormMessage>{errors.photos.message}</FormMessage>
+            )}
+          </div>
 
           <CardContent className="pt-0">
             <FormField
               control={control}
-              name="carBrand"
+              name="brand"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Марка*</FormLabel>
 
                   <Select
                     listTitle="Марка"
-                    options={CAR_BRANDS_OPTIONS}
-                    value={field.value}
-                    onChange={field.onChange}
+                    options={brands ?? []}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      }
+                      setValue("model", null);
+                    }}
                   />
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
               control={control}
-              name="carModel"
+              name="model"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Модель*</FormLabel>
 
                   <Select
+                    disabled={isModelsLoading || !carBrand}
+                    isLoading={isModelsLoading}
                     listTitle="Модель"
-                    options={CAR_BRANDS_OPTIONS}
-                    value={field.value}
-                    onChange={field.onChange}
+                    options={carBrandModels}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      } else if (val === null) {
+                        field.onChange(val);
+                      }
+                    }}
                   />
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="flex flex-col gap-3">
-              <div className="gap-3 grid grid-cols-2">
-                <FormField
-                  control={control}
-                  name="priceUsd"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ціна $</FormLabel>
+            <div className="gap-3 grid grid-cols-2">
+              <FormField
+                control={control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ціна $</FormLabel>
 
-                      <FormControl>
-                        <Input
-                          placeholder="Ціна USD"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                    <FormControl>
+                      <Input placeholder="Ціна USD" type="number" {...field} />
+                    </FormControl>
 
-                <FormField
-                  control={control}
-                  name="priceUah"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ціна ₴</FormLabel>
-
-                      <FormControl>
-                        <Input
-                          placeholder="Ціна UAH"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={control}
-                name="possibleBargain"
+                name="bargaining"
                 render={({ field }) => (
-                  <FormItem className="justify-items-start">
+                  <FormItem className="justify-items-start self-end">
                     <FormControl>
                       <Toggle
                         pressed={field.value}
@@ -185,7 +224,7 @@ export default function ListingForm() {
 
             <FormField
               control={control}
-              name="typeofTransport"
+              name="type_of_car"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тип траспорта*</FormLabel>
@@ -193,16 +232,20 @@ export default function ListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {TRANSPORT_OPTIONS.map((option) => (
+                      {commonFilters?.type_of_car?.map((option) => (
                         <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
+                          key={option.id}
+                          value={String(option.id)}
                         >
-                          {option.label}
+                          {option.name}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
@@ -218,23 +261,27 @@ export default function ListingForm() {
                 <FormItem>
                   <FormLabel>Стан*</FormLabel>
 
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      {CAR_CONDITION_OPTIONS.map((option) => (
-                        <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FormControl>
+                  <ToggleGroup
+                    type="single"
+                    value={String(field.value)}
+                    onValueChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      }
+                    }}
+                    className="flex flex-wrap items-center gap-2"
+                  >
+                    {commonFilters?.condition?.map((option) => (
+                      <ToggleGroupItem
+                        key={option.id}
+                        value={String(option.id)}
+                      >
+                        {option.name}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -242,7 +289,7 @@ export default function ListingForm() {
             <div className="items-end gap-3 grid grid-cols-2">
               <FormField
                 control={control}
-                name="kilometrage"
+                name="mileage"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Пробіг*</FormLabel>
@@ -250,18 +297,20 @@ export default function ListingForm() {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={noKilometrage}
+                        disabled={noMilage}
                         placeholder="тис. км."
                         type="number"
                       />
                     </FormControl>
+
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={control}
-                name="noKilometrage"
+                name="noMileage"
                 render={({ field }) => (
                   <FormItem className="justify-items-start">
                     <FormControl>
@@ -271,7 +320,7 @@ export default function ListingForm() {
                           field.onChange(val);
 
                           if (val) {
-                            setValue("kilometrage", "0");
+                            setValue("mileage", "");
                           }
                         }}
                       >
@@ -292,45 +341,71 @@ export default function ListingForm() {
 
                   <Select
                     listTitle="Регіон"
-                    options={REGIONS_OPTIONS}
-                    value={field.value}
-                    onChange={field.onChange}
+                    options={regions ?? []}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      }
+                      setValue("settlement", null);
+                    }}
                   />
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
               control={control}
-              name="carAccident"
+              name="settlement"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Участь в ДТП</FormLabel>
+                  <FormLabel>Населений пункт*</FormLabel>
 
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      {CAR_ACCIDENT_OPTIONS.map((option) => (
-                        <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FormControl>
+                  <Select
+                    disabled={isSettlementsLoading || !region}
+                    isLoading={isSettlementsLoading}
+                    listTitle="Населений пункт"
+                    options={settlementsOptions ?? []}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      } else if (val === null) {
+                        field.onChange(val);
+                      }
+                    }}
+                  />
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
               control={control}
-              name="fuelType"
+              name="engine_capacity_l"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Об'єм двигуна *</FormLabel>
+
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Об'єм двигуна (л.)"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="fuel_type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Паливо*</FormLabel>
@@ -338,27 +413,33 @@ export default function ListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {FUEL_TYPE_OPTIONS.map((option) => (
+                      {commonFilters?.fuel_type?.map((option) => (
                         <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
+                          key={option.id}
+                          value={String(option.id)}
                         >
-                          {option.label}
+                          {option.name}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
                   </FormControl>
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
               control={control}
-              name="transmission"
+              name="gearbox"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Коробка передач</FormLabel>
@@ -366,16 +447,20 @@ export default function ListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {TRANSMISSION_TYPE_OPTIONS.map((option) => (
+                      {commonFilters?.gearbox?.map((option) => (
                         <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
+                          key={option.id}
+                          value={String(option.id)}
                         >
-                          {option.label}
+                          {option.name}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
@@ -386,7 +471,7 @@ export default function ListingForm() {
 
             <FormField
               control={control}
-              name="bodyType"
+              name="body_type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тип кузова</FormLabel>
@@ -394,16 +479,20 @@ export default function ListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {BODY_TYPE_OPTIONS.map((option) => (
+                      {commonFilters?.body_type.map((option) => (
                         <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
+                          key={option.id}
+                          value={String(option.id)}
                         >
-                          {option.label}
+                          {option.name}
                         </ToggleGroupItem>
                       ))}
                     </ToggleGroup>
@@ -414,35 +503,7 @@ export default function ListingForm() {
 
             <FormField
               control={control}
-              name="suspension"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Підвіска</FormLabel>
-
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      {SUSPENSION_TYPE_OPTIONS.map((option) => (
-                        <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="driveType"
+              name="drive_type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Привод</FormLabel>
@@ -454,7 +515,7 @@ export default function ListingForm() {
                       onValueChange={field.onChange}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {DRIVE_TYPE_OPTIONS.map((option) => (
+                      {commonFilters?.drive_type.map((option) => (
                         <ToggleGroupItem
                           key={option.value}
                           value={option.value}
@@ -470,17 +531,41 @@ export default function ListingForm() {
 
             <FormField
               control={control}
-              name="carCountry"
+              name="year"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Країна виробник</FormLabel>
+                  <FormLabel>Рік виробництва*</FormLabel>
 
                   <Select
-                    listTitle="Країна"
-                    options={CAR_COUNTRIES_OPTIONS}
-                    value={field.value}
-                    onChange={field.onChange}
+                    listTitle="Рік виробництва"
+                    options={productionYearOptions}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      } else if (val === null) {
+                        field.onChange(val);
+                      }
+                    }}
                   />
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="vin_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>VIN номер</FormLabel>
+
+                  <FormControl>
+                    <Input placeholder="VIN номер" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -499,8 +584,31 @@ export default function ListingForm() {
               Скасувати
             </Button>
 
-            <Button>
-              Зберегти <CheckMarkIcon />
+            <Button
+              type="submit"
+              form="listing-form"
+              disabled={isPending || isUploadingPhotos}
+              onClick={handleSubmit((formValues) => {
+                const payload = {
+                  ...formValues,
+                  price: Number(formValues.price),
+                  mileage: Number(formValues.mileage),
+                };
+
+                console.log(payload);
+
+                mutate(payload);
+              }, console.warn)}
+            >
+              {isPending || isUploadingPhotos ? (
+                <>
+                  Збереження... <LoaderCircle className="size-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  Зберегти <CheckMarkIcon />
+                </>
+              )}
             </Button>
           </div>
         </form>

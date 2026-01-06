@@ -5,7 +5,7 @@ import filtersService from "@/services/filters-service";
 
 import type { AxiosError } from "axios";
 
-export default function useModels(brand_id?: number) {
+export default function useModels(brand_id?: number | null) {
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["models", brand_id],
     queryFn: () => filtersService.getBrandModels(brand_id!),

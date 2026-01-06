@@ -5,7 +5,7 @@ import filtersService from "@/services/filters-service";
 
 import type { AxiosError } from "axios";
 
-export default function useSettlements(region_id?: number) {
+export default function useSettlements(region_id?: number | null) {
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["settlements", region_id],
     queryFn: () => filtersService.getRegionSettlements(region_id!),

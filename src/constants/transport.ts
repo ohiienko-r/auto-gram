@@ -7,15 +7,6 @@ export const TYPEOF_TRANSPORT = {
   BUS: "bus",
 } as const;
 
-export const TRANSPORT_OPTIONS = [
-  { value: TYPEOF_TRANSPORT.ALL, label: "Все" },
-  { value: TYPEOF_TRANSPORT.PASSENGER, label: "Легкові" },
-  { value: TYPEOF_TRANSPORT.MOTO, label: "Мото" },
-  { value: TYPEOF_TRANSPORT.TRUCK, label: "Вантажівки" },
-  { value: TYPEOF_TRANSPORT.SPECIAL, label: "Спецтехніка" },
-  { value: TYPEOF_TRANSPORT.BUS, label: "Автобуси" },
-];
-
 export const CAR_BRANDS_OPTIONS = [
   { value: "acura", label: "Acura" },
   { value: "alfa-romeo", label: "Alfa Romeo" },

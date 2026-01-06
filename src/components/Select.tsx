@@ -19,13 +19,16 @@ import { Toggle } from "./ui/toggle";
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import SearchIcon from "@/icons/SearchIcon";
 import XIcon from "@/icons/XIcon";
+import { LoaderCircle } from "lucide-react";
 
 interface SelectListProps {
   listTitle?: string;
   triggerTitle?: string;
   options?: Option[];
   value?: string | null;
-  onChange: (val: string | null) => void;
+  disabled?: boolean;
+  isLoading?: boolean;
+  onChange: (val: string | null | undefined) => void;
 }
 
 export default function Select({
@@ -33,6 +36,8 @@ export default function Select({
   triggerTitle = "Обрати",
   options,
   value,
+  disabled,
+  isLoading,
   onChange,
 }: SelectListProps) {
   const [open, setOpen] = useState(false);
@@ -55,8 +60,14 @@ export default function Select({
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <Toggle pressed={false} className="w-fit" onClick={() => setOpen(true)}>
+      <Toggle
+        pressed={false}
+        disabled={disabled}
+        className="w-fit"
+        onClick={() => setOpen(true)}
+      >
         {triggerTitle}
+        {isLoading && <LoaderCircle className="size-4 animate-spin" />}
       </Toggle>
 
       {value && (
