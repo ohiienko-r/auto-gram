@@ -41,7 +41,7 @@ export default {
   },
 
   async uploadListingPhotos(carId: number, formData: FormData) {
-    await api.post(`${this.BASE_URL}${carId}/files/`, formData, {
+    await api.post(`${this.BASE_URL}${carId}/filesUpload/`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },

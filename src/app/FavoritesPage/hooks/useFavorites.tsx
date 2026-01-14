@@ -13,6 +13,7 @@ export default function useFavorites() {
     hasNextPage,
     error,
     isError,
+    isRefetching,
   } = useInfiniteQuery({
     queryKey: ["favorites"],
     initialPageParam: 0,
@@ -43,5 +44,6 @@ export default function useFavorites() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isRefetching,
   };
 }

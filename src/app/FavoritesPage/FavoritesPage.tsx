@@ -6,9 +6,17 @@ import FavoritesEmpty from "./components/FavoritesEmpty";
 import Title from "@/components/Title";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { LoaderCircle } from "lucide-react";
+
 export default function FavoritesPage() {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useFavorites();
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isRefetching,
+  } = useFavorites();
 
   const favorites = data?.pages.flatMap((page) => page.results) ?? [];
   return (
@@ -17,9 +25,19 @@ export default function FavoritesPage() {
         <Title>Обране</Title>
       </header>
 
-      {favorites.length === 0 && <FavoritesEmpty />}
+      {favorites?.length === 0 && !isLoading && !isRefetching && (
+        <FavoritesEmpty />
+      )}
 
-      {favorites.length > 0 && (
+      {(isLoading || isRefetching) && (
+        <section className="flex flex-col gap-3">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
+          ))}
+        </section>
+      )}
+
+      {favorites?.length > 0 && (
         <section className="flex flex-col gap-3">
           <h3 className="font-medium text-black/60 text-base">
             Збережено {favorites.length} авто
@@ -30,21 +48,19 @@ export default function FavoritesPage() {
               <CarListingCard key={favorite.id} {...favorite} />
             ))}
 
-            {(isLoading || isFetchingNextPage) &&
-              Array.from({ length: 2 }).map((_, index) => (
-                <Skeleton
-                  key={index}
-                  className="rounded-2xl w-full h-[430px]"
-                />
-              ))}
-
             {hasNextPage && (
               <Button
                 variant="link"
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
               >
-                Завантажити ще
+                {isFetchingNextPage ? (
+                  <>
+                    <LoaderCircle className="animate-spin" /> Завантажуємо...
+                  </>
+                ) : (
+                  "Завантажити ще"
+                )}
               </Button>
             )}
           </div>

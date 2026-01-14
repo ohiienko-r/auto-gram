@@ -35,6 +35,7 @@ export interface CarListing {
   body_type: string;
   files: string[];
   created_at: string;
+  is_liked: boolean;
 }
 
 export interface MyCarListing {

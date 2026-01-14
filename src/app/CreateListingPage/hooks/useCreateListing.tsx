@@ -32,10 +32,11 @@ export default function useCreateListing() {
       await mutateAsync({ carId: response.id, data: formData });
 
       queryClient.invalidateQueries({ queryKey: ["myListings"] });
-      // [FIY] Probably won't be needed but added just in case
       queryClient.invalidateQueries({ queryKey: ["listingsSearch"] });
 
       navigate(-1);
+
+      toast.success("Оголошення створено!");
     },
     onError: (error: AxiosError) => {
       console.error(

@@ -1,4 +1,6 @@
+import type { MouseEvent } from "react";
 import useToggleListingLike from "@/hooks/useToggleListingLike";
+import clsx from "clsx";
 
 import { Link } from "react-router";
 import { ROUTES_NAMES } from "@/constants/router";
@@ -15,7 +17,6 @@ import SpeedometerIcon from "@/icons/SpeedometerIcon";
 import TransmissionIcon from "@/icons/TransmissionIcon";
 import GeoPinIcon from "@/icons/GeoPinIcon";
 import FireIcon from "@/icons/FireIcon";
-import { LoaderCircle } from "lucide-react";
 
 export default function CarListingCard({
   id,
@@ -28,8 +29,15 @@ export default function CarListingCard({
   gearbox,
   files,
   created_at,
+  is_liked,
 }: CarListing) {
-  const { mutate, isPending } = useToggleListingLike();
+  const { mutate } = useToggleListingLike();
+
+  const handleAddToFavorites = (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    mutate(id);
+  };
 
   return (
     <Link to={`${ROUTES_NAMES.DETAILS}/${id}`}>
@@ -51,29 +59,17 @@ export default function CarListingCard({
                 {brand} {model}
               </h2>
 
-              <p className="inline-flex items-center gap-2 font-semibold text-base">
-                <span className="text-primary">{price}$</span>
-
-                <span className="text-black/60">
-                  {Math.round(price * 42.34)} грн
-                </span>
+              <p className="inline-flex items-center gap-2 font-semibold text-primary text-base">
+                {`$${price}`}
               </p>
             </div>
 
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                mutate(id);
-              }}
+              onClick={handleAddToFavorites}
               className="group size-6 cursor-pointer"
             >
-              {isPending ? (
-                <LoaderCircle className="size-6 text-primary animate-spin" />
-              ) : (
-                <HeartIcon />
-              )}
+              <HeartIcon className={clsx(is_liked && "fill-primary")} />
             </button>
           </div>
 

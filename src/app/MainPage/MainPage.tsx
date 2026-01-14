@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import PlusIcon from "@/icons/PlusIcon";
+import { LoaderCircle } from "lucide-react";
 
 export default function MainPage() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -53,7 +54,13 @@ export default function MainPage() {
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
           >
-            Завантажити ще
+            {isFetchingNextPage ? (
+              <>
+                <LoaderCircle className="animate-spin" /> Завантажуємо...
+              </>
+            ) : (
+              "Завантажити ще"
+            )}
           </Button>
         )}
       </section>
