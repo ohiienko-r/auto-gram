@@ -1,3 +1,4 @@
+import { useIsMutating } from "@tanstack/react-query";
 import useFavorites from "./hooks/useFavorites";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LoaderCircle } from "lucide-react";
 
 export default function FavoritesPage() {
+  const isMutating = useIsMutating({ mutationKey: ["toggleListingLike"] });
   const {
     data,
     isLoading,
@@ -19,17 +21,24 @@ export default function FavoritesPage() {
   } = useFavorites();
 
   const favorites = data?.pages.flatMap((page) => page.results) ?? [];
+
+  const showSkeletons = isLoading || (isRefetching && favorites.length === 0);
+
   return (
     <section className="flex flex-col flex-1 gap-4 px-4 pt-5">
-      <header className="text-center">
+      <header className="flex justify-center items-center gap-2">
         <Title>Обране</Title>
+
+        {(isRefetching || isMutating > 0) && (
+          <LoaderCircle className="size-4 animate-spin" />
+        )}
       </header>
 
       {favorites?.length === 0 && !isLoading && !isRefetching && (
         <FavoritesEmpty />
       )}
 
-      {(isLoading || isRefetching) && (
+      {showSkeletons && (
         <section className="flex flex-col gap-3">
           {Array.from({ length: 2 }).map((_, index) => (
             <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
@@ -37,7 +46,7 @@ export default function FavoritesPage() {
         </section>
       )}
 
-      {favorites?.length > 0 && (
+      {!showSkeletons && favorites?.length > 0 && (
         <section className="flex flex-col gap-3">
           <h3 className="font-medium text-black/60 text-base">
             Збережено {favorites.length} авто
