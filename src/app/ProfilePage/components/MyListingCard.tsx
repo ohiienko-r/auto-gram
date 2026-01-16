@@ -1,18 +1,23 @@
+import { LISTING_STATUS } from "@/constants/listing";
+import clsx from "clsx";
+
 import type { MyCarListing } from "@/types/app";
 
 import { Card, CardContent } from "@/components/Card";
+import RemoveListingButtonWidthModal from "./RemoveListingButtonWithModal";
 
 import EyeIcon from "@/icons/EyeIcon";
 import EditIcon from "@/icons/EditIcon";
 import TrashIcon from "@/icons/TrashIcon";
 
 export default function MyListingCard({
+  id,
   title,
   price,
-  price_uah,
   created_ago,
   cover,
   views,
+  status,
 }: MyCarListing) {
   return (
     <Card>
@@ -24,15 +29,10 @@ export default function MyListingCard({
 
       <CardContent className="gap-3 py-3">
         <div className="flex-col gap-1 fex">
-          {/* Add title (car name) */}
           <h2 className="font-semibold text-2xl">{title}</h2>
 
           <p className="inline-flex items-center gap-2 font-semibold text-base">
-            {/* Price in USD */}
             <span className="text-primary">{price}$</span>
-
-            {/* Price in UAH */}
-            <span className="text-black/60">{price_uah} грн</span>
           </p>
         </div>
 
@@ -62,10 +62,23 @@ export default function MyListingCard({
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
-            <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
-              Змінити <EditIcon />
-            </button>
+          <div
+            className={clsx(
+              "flex items-center",
+              status === LISTING_STATUS.REMOVED
+                ? "justify-end"
+                : "justify-between"
+            )}
+          >
+            {status !== LISTING_STATUS.REMOVED && (
+              <>
+                <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
+                  Змінити <EditIcon />
+                </button>
+
+                <RemoveListingButtonWidthModal id={id} />
+              </>
+            )}
 
             <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
               Видалити <TrashIcon />

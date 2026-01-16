@@ -9,7 +9,6 @@ import MyListingCard from "./components/MyListingCard";
 import ProfileForm from "./forms/ProfileForm";
 import ProfileEmpty from "./components/ProfileEmpty";
 import Title from "@/components/Title";
-
 import PlusIcon from "@/icons/PlusIcon";
 import { LoaderCircle } from "lucide-react";
 
@@ -17,7 +16,7 @@ export default function ProfilePage() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMyListings();
 
-  const { approved, pending } = useMemo(() => {
+  const { approved, pending, removed } = useMemo(() => {
     const listings = data?.pages.flatMap((page) => page?.results) ?? [];
     return {
       approved: listings.filter(
@@ -25,6 +24,9 @@ export default function ProfilePage() {
       ),
       pending: listings.filter(
         (listing) => listing.status === LISTING_STATUS.PENDING
+      ),
+      removed: listings.filter(
+        (listing) => listing.status === LISTING_STATUS.REMOVED
       ),
     };
   }, [data]);
@@ -52,11 +54,12 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {approved.length === 0 && pending.length === 0 && !isLoading && (
-          <ProfileEmpty />
-        )}
+        {approved.length === 0 &&
+          pending.length === 0 &&
+          removed.length === 0 &&
+          !isLoading && <ProfileEmpty />}
 
-        {(approved.length > 0 || pending.length > 0) && (
+        {(approved.length > 0 || pending.length > 0 || removed.length > 0) && (
           <>
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
@@ -105,6 +108,22 @@ export default function ProfilePage() {
                 )}
 
                 {pending?.map((listing) => (
+                  <MyListingCard key={listing.id} {...listing} />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h3 className="opacity-60 font-medium text-base">
+                Зняті ({removed.length})
+              </h3>
+
+              <div className="flex flex-col gap-5">
+                {removed.length === 0 && (
+                  <p className="text-gray-500 text-center">Немає знятих авто</p>
+                )}
+
+                {removed?.map((listing) => (
                   <MyListingCard key={listing.id} {...listing} />
                 ))}
               </div>
