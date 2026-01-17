@@ -23,7 +23,7 @@ export default function ProfileForm() {
   const form = useForm({
     defaultValues: {
       first_name: "",
-      phone_number: "",
+      phone_number: "+380",
     },
   });
 
@@ -73,6 +73,18 @@ export default function ProfileForm() {
                 {editing ? (
                   <Input
                     {...field}
+                    value={field.value || "+380"}
+                    onChange={(e) => {
+                      let val = e.target.value;
+
+                      if (!val.startsWith("+380")) {
+                        val = "+380";
+                      }
+
+                      const cleanVal = "+" + val.replace(/[^\d]/g, "");
+
+                      field.onChange(cleanVal);
+                    }}
                     placeholder="+38 ___ ___ __ __"
                     className="h-[43px]"
                     type="tel"

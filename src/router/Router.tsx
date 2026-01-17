@@ -10,6 +10,7 @@ import FavoritesPage from "@/app/FavoritesPage/FavoritesPage";
 import DetailsPage from "@/app/DetailsPage/DetailsPage";
 import ProfilePage from "@/app/ProfilePage/ProfilePage";
 import CreateListingPage from "@/app/CreateListingPage/CreateListingPage";
+import EditListingPage from "@/app/EditListingPage/EditListingPage";
 
 export default function Router() {
   return (
@@ -29,6 +30,10 @@ export default function Router() {
             <Route
               path={ROUTES_NAMES.CREATE_LISTING}
               element={<CreateListingPage />}
+            />
+            <Route
+              path={`${ROUTES_NAMES.EDIT_LISTING}/:id`}
+              element={<EditListingPage />}
             />
           </Route>
         </Route>
