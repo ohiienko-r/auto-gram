@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 
-import type { AuthResponse } from "@/types/auth-types";
+import type { AuthResponse, UpdateProfilePayload } from "@/types/auth-types";
 
 export default {
   BASE_URL: "/api/auth",
@@ -10,5 +10,9 @@ export default {
       init_data: initDataRaw,
     });
     return data;
+  },
+
+  async updateProfile(data: UpdateProfilePayload) {
+    await api.patch(`${this.BASE_URL}/change_user/`, data);
   },
 };

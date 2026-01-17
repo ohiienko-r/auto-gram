@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import useListingDetails from "./hooks/useListingDetails";
 import useToggleListingLike from "@/hooks/useToggleListingLike";
+import { openTelegramLink } from "@tma.js/sdk-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -126,7 +127,7 @@ export default function DetailsPage() {
                 {isLoading ? (
                   <Skeleton className="rounded-sm w-full h-6" />
                 ) : (
-                  <p>-</p>
+                  <p>{data?.description || "-"}</p>
                 )}
               </div>
 
@@ -146,7 +147,7 @@ export default function DetailsPage() {
                 {isLoading ? (
                   <Skeleton className="rounded-sm w-10 h-6" />
                 ) : (
-                  <p>-</p>
+                  <p>{data?.color ?? "-"}</p>
                 )}
               </div>
 
@@ -159,12 +160,6 @@ export default function DetailsPage() {
                   <p>{data?.salon_material}</p>
                 )}
               </div>
-
-              {/* <div className="flex flex-col gap-1.5 font-medium text-base">
-                <h3 className="text-black/60">Безпека</h3>
-
-                <p>Шкіра</p>
-              </div> */}
 
               <div className="flex flex-col gap-1.5 font-medium text-base">
                 <h3 className="text-black/60">Стан</h3>
@@ -182,27 +177,34 @@ export default function DetailsPage() {
         {isLoading ? (
           <Skeleton className="rounded-2xl w-full h-[200px]" />
         ) : (
-          <Card>
-            <CardContent className="gap-3 py-3">
-              <div className="flex justify-between items-center font-medium text-black/60 text-base">
-                <p>Продавець</p>
+          data?.owner && (
+            <Card>
+              <CardContent className="gap-3 py-3">
+                <div className="flex justify-between items-center font-medium text-black/60 text-base">
+                  <p>Продавець</p>
 
-                <p>3 роки з нами</p>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2 font-semibold text-2xl">
-                  <h2>Николай</h2>
-                  <p className="text-primary">+38 099 286 98 37</p>
+                  {/* TODO: Implement when applicable */}
+                  {/* <p>3 роки з нами</p> */}
                 </div>
 
-                <Button>
-                  Написати в Телеграм
-                  <TelegramOutlineIcon />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2 font-semibold text-2xl">
+                    <h2>{data.owner.name}</h2>
+                    <p className="text-primary">{data.owner?.phone}</p>
+                  </div>
+
+                  <Button
+                    onClick={() =>
+                      openTelegramLink(`https://t.me/${data.owner?.name}`)
+                    }
+                  >
+                    Написати в Телеграм
+                    <TelegramOutlineIcon />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )
         )}
       </div>
     </section>

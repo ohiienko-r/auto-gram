@@ -21,6 +21,8 @@ export interface CarListing {
   model: string;
   price: number;
   bargaining: boolean;
+  description: string;
+  color: string | null;
   mileage: number;
   drive_type: string;
   salon_material: string;
@@ -36,6 +38,13 @@ export interface CarListing {
   files: string[];
   created_at: string;
   is_liked: boolean;
+  owner: Owner | null;
+}
+
+export interface Owner {
+  name: string;
+  phone: string | null;
+  telegram_id: number;
 }
 
 export interface MyCarListing {

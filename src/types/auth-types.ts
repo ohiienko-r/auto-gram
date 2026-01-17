@@ -10,3 +10,8 @@ export interface AuthResponse {
     refresh: string;
   };
 }
+
+export interface UpdateProfilePayload {
+  first_name?: string;
+  phone_number?: string;
+}
