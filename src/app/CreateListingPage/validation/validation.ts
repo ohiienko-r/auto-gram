@@ -5,7 +5,7 @@ const listingPhoto = z.object({
   photo: z.file().or(z.string()),
 });
 
-export const ListingFormSchema = z
+export const CreateListingFormSchema = z
   .object({
     photos: z.array(listingPhoto).min(1, "Додайте хоча б одне фото автомобіля"),
 
@@ -79,4 +79,4 @@ export const ListingFormSchema = z
     }
   });
 
-export type ListingFormValues = z.infer<typeof ListingFormSchema>;
+export type CreateListingFormValues = z.infer<typeof CreateListingFormSchema>;

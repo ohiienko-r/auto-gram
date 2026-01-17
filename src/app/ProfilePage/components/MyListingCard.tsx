@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router";
+import { ROUTES_NAMES } from "@/constants/router";
 import { LISTING_STATUS } from "@/constants/listing";
 import clsx from "clsx";
 
@@ -19,6 +21,8 @@ export default function MyListingCard({
   views,
   status,
 }: MyCarListing) {
+  const navigate = useNavigate();
+
   return (
     <Card>
       <img
@@ -72,7 +76,10 @@ export default function MyListingCard({
           >
             {status !== LISTING_STATUS.REMOVED && (
               <>
-                <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
+                <button
+                  onClick={() => navigate(`${ROUTES_NAMES.EDIT_LISTING}/${id}`)}
+                  className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
+                >
                   Змінити <EditIcon />
                 </button>
 

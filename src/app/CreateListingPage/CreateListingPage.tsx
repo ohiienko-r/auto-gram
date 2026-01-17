@@ -1,5 +1,5 @@
 import Title from "@/components/Title";
-import ListingForm from "@/shared/forms/ListingForm";
+import CreateListingForm from "./components/CreateListingForm";
 
 export default function CreateListingPage() {
   return (
@@ -8,7 +8,7 @@ export default function CreateListingPage() {
         <Title>Продати авто</Title>
       </header>
 
-      <ListingForm />
+      <CreateListingForm />
     </section>
   );
 }

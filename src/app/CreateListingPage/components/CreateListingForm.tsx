@@ -8,8 +8,8 @@ import useCreateListing from "@/app/CreateListingPage/hooks/useCreateListing";
 import { viewport } from "@tma.js/sdk-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ListingFormSchema,
-  type ListingFormValues,
+  CreateListingFormSchema,
+  type CreateListingFormValues,
 } from "../validation/validation";
 
 import { Button } from "@/components/ui/button";
@@ -31,14 +31,14 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import { LoaderCircle } from "lucide-react";
 
-export default function ListingForm() {
+export default function CreateListingForm() {
   const { commonFilters, regions, brands } = useFiltersStore();
   const { mutate, isPending, isUploadingPhotos } = useCreateListing();
   const { bottom } = viewport.safeAreaInsets();
   const navigate = useNavigate();
 
-  const form = useForm<ListingFormValues>({
-    resolver: zodResolver(ListingFormSchema),
+  const form = useForm<CreateListingFormValues>({
+    resolver: zodResolver(CreateListingFormSchema),
     defaultValues: {
       photos: [],
       brand: null,
