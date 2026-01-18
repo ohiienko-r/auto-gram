@@ -7,6 +7,7 @@ import useSettlements from "@/hooks/filters/useSettlements";
 import useListingPhotos from "../hooks/useListingPhotos";
 import useListingDetails from "@/hooks/useListingDetails";
 import useResetEditListingForm from "../hooks/useResetEditListingForm";
+import useDeleteListingPhotos from "../hooks/useDeleteListingPhotos";
 
 import type { ListingPhotos } from "@/types/listing";
 
@@ -52,6 +53,7 @@ export default function EditListingForm() {
     useListingPhotos(id);
   const { data: details, isLoading: loadingDetails } = useListingDetails(id);
   const { commonFilters, regions, brands } = useFiltersStore();
+  const { mutateAsync, isPending } = useDeleteListingPhotos();
 
   const { bottom } = viewport.safeAreaInsets();
   const navigate = useNavigate();
@@ -189,9 +191,9 @@ export default function EditListingForm() {
               />
             )}
 
-            {mergedContent.length === 0 && !isLoading && (
+            {/* {mergedContent.length === 0 && !loadingListingPhotos && (
               <FormMessage>Додайте хоча б одне фото автомобіля</FormMessage>
-            )}
+            )} */}
           </div>
 
           <CardContent className="pt-0">
@@ -715,13 +717,14 @@ export default function EditListingForm() {
               type="submit"
               form="listing-form"
               disabled={isLoading}
-              onClick={handleSubmit((formValues) => {
+              onClick={handleSubmit(async (formValues) => {
                 // TODO: UPDATE and TEST when new endpoin is applicable
                 const payload = {
                   ...formValues,
                   price: Number(formValues.price),
                   mileage: Number(formValues.mileage),
                 };
+
                 if (!details) return;
 
                 const updateValues = Object.entries(payload)?.reduce(
@@ -748,7 +751,9 @@ export default function EditListingForm() {
                   {} as Partial<typeof formValues>
                 );
 
-                console.log(updateValues);
+                if (removePhotos.length > 0) {
+                  await mutateAsync(removePhotos);
+                }
               }, console.warn)}
             >
               Зберегти

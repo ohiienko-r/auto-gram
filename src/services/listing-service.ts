@@ -56,4 +56,8 @@ export default {
     const { data } = await api.get(`${this.BASE_URL}${carId}/files/`);
     return data;
   },
+
+  async deleteListingPhoto(fileId: number) {
+    await api.delete(`${this.BASE_URL}files/${fileId}/`);
+  },
 };
