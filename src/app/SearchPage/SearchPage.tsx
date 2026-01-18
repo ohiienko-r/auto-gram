@@ -1,5 +1,4 @@
 import Title from "@/components/Title";
-import { Card, CardContent } from "@/components/Card";
 import SearchForm from "./forms/SearchForm";
 
 export default function SearchPage() {
@@ -9,11 +8,7 @@ export default function SearchPage() {
         <Title>Пошук</Title>
       </header>
 
-      <Card>
-        <CardContent>
-          <SearchForm />
-        </CardContent>
-      </Card>
+      <SearchForm />
     </section>
   );
 }

@@ -166,10 +166,11 @@ body {
 }
 
 #range-input .range-slider__thumb[data-upper]::after {
-  content: var(--slider-value, "$75");
+  content: var(--slider-value, "$400000");
   position: absolute;
   top: -30px;
-  left: -80%;
+  left: -50%;
+  transform: translateX(-50%);
   font-size: 16px;
   font-weight: 500;
 }
