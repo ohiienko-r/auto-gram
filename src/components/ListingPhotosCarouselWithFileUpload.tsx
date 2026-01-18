@@ -15,7 +15,7 @@ const MAX_PHOTOS_COUNT = 15;
 const MAX_FILE_SIZE = 10000000;
 
 interface ListingPhotosCarouselProps {
-  data?: { id: string; photo: File | string }[];
+  data?: { id: string | number; url: File | string }[];
   onPhotoAdd?: (photo: File) => void;
   onPhotoRemove?: (index: number) => void;
 }
@@ -88,9 +88,7 @@ export default function ListingPhotosCarouselWithFileUpload({
     return data.map((item) => ({
       ...item,
       photo:
-        typeof item.photo === "string"
-          ? item.photo
-          : URL.createObjectURL(item.photo),
+        typeof item.url === "string" ? item.url : URL.createObjectURL(item.url),
     }));
   }, [data]);
 
@@ -153,8 +151,10 @@ export default function ListingPhotosCarouselWithFileUpload({
       {data?.length > 0 && (
         <div className="bottom-2.5 left-2.5 absolute flex items-center gap-2">
           <div className="flex justify-center items-center bg-white px-3 rounded-[12px] h-[35px] font-medium text-base">
-            {currentItem <= data?.length - 1 ? currentItem : data?.length ?? 0}/
-            {data?.length ?? 0}
+            {currentItem <= data?.length - 1
+              ? currentItem
+              : (data?.length ?? 0)}
+            /{data?.length ?? 0}
           </div>
 
           {currentItem <= data?.length && (

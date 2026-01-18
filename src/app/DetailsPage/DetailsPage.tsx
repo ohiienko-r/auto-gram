@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import useListingDetails from "./hooks/useListingDetails";
+import useListingDetails from "../../hooks/useListingDetails";
 import useToggleListingLike from "@/hooks/useToggleListingLike";
 import { openTelegramLink } from "@tma.js/sdk-react";
 

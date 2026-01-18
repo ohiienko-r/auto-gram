@@ -1,15 +1,15 @@
 import * as z from "zod";
 
-export const CreateListingFormSchema = z
+export const EditListingFormSchema = z
   .object({
-    photos: z
+    newPhotos: z
       .array(
         z.object({
           id: z.string(),
           url: z.file().or(z.string()),
         })
       )
-      .min(1, "Додайте хоча б одне фото автомобіля"),
+      .optional(),
 
     brand: z.number().nullable(),
     model: z.number().nullable(),
@@ -81,4 +81,4 @@ export const CreateListingFormSchema = z
     }
   });
 
-export type CreateListingFormValues = z.infer<typeof CreateListingFormSchema>;
+export type EditListingFormValues = z.infer<typeof EditListingFormSchema>;

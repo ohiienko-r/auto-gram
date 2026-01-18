@@ -74,17 +74,17 @@ export default function MyListingCard({
                 : "justify-between"
             )}
           >
-            {status !== LISTING_STATUS.REMOVED && (
-              <>
-                <button
-                  onClick={() => navigate(`${ROUTES_NAMES.EDIT_LISTING}/${id}`)}
-                  className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
-                >
-                  Змінити <EditIcon />
-                </button>
+            {status !== LISTING_STATUS.PENDING && (
+              <button
+                onClick={() => navigate(`${ROUTES_NAMES.EDIT_LISTING}/${id}`)}
+                className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
+              >
+                Змінити <EditIcon />
+              </button>
+            )}
 
-                <RemoveListingButtonWidthModal id={id} />
-              </>
+            {status !== LISTING_STATUS.REMOVED && (
+              <RemoveListingButtonWidthModal id={id} />
             )}
 
             <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">

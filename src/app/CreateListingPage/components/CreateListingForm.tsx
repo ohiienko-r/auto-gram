@@ -78,7 +78,7 @@ export default function CreateListingForm() {
   });
 
   const handleAddPhoto = (photo: File) => [
-    append({ id: globalThis.crypto.randomUUID(), photo }),
+    append({ id: globalThis.crypto.randomUUID(), url: photo }),
   ];
 
   const carBrandModels = useMemo(
@@ -594,8 +594,6 @@ export default function CreateListingForm() {
                   price: Number(formValues.price),
                   mileage: Number(formValues.mileage),
                 };
-
-                console.log(payload);
 
                 mutate(payload);
               }, console.warn)}

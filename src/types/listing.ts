@@ -1,4 +1,4 @@
-import type { ListingFormValues } from "@/shared/validation/validation";
+import { type CreateListingFormValues } from "@/app/CreateListingPage/validation/validation";
 
 export interface CreateListingResponse {
   id: number;
@@ -6,4 +6,18 @@ export interface CreateListingResponse {
   message: string;
 }
 
-export type ListingPayload = Omit<ListingFormValues, "price" | "mileage"> & {};
+export type CreateListingPayload = Omit<
+  CreateListingFormValues,
+  "price" | "mileage"
+> & {};
+
+export interface ListingPhotos {
+  id: number;
+  name: string;
+  url: string;
+}
+
+export interface GetListingPhotosResponse {
+  count: number;
+  results: ListingPhotos[];
+}

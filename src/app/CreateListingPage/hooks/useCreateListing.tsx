@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import listingService from "@/services/listing-service";
 
-import type { ListingPayload } from "@/types/listing";
+import type { CreateListingPayload } from "@/types/listing";
 import type { AxiosError } from "axios";
 
 export default function useCreateListing() {
@@ -16,7 +16,8 @@ export default function useCreateListing() {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["createListing"],
-    mutationFn: (data: ListingPayload) => listingService.createListing(data),
+    mutationFn: (data: CreateListingPayload) =>
+      listingService.createListing(data),
     onSuccess: async (response, formValues) => {
       toast.info("Завантажуємо фото");
 
@@ -25,7 +26,7 @@ export default function useCreateListing() {
       formValues.photos.forEach((photo) => {
         formData.append(
           formValues.photos.length > 1 ? "files" : "file",
-          photo.photo
+          photo.url
         );
       });
 

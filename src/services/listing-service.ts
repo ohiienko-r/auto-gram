@@ -1,7 +1,11 @@
 import api from "@/lib/axios";
 
 import type { CarListing, PaginatedResponse, MyCarListing } from "@/types/app";
-import type { CreateListingResponse, ListingPayload } from "@/types/listing";
+import type {
+  CreateListingResponse,
+  CreateListingPayload,
+  GetListingPhotosResponse,
+} from "@/types/listing";
 
 export default {
   BASE_URL: "/api/tg/cars/",
@@ -35,7 +39,9 @@ export default {
     await api.delete(`${this.BASE_URL}${id}/remove/`);
   },
 
-  async createListing(values: ListingPayload): Promise<CreateListingResponse> {
+  async createListing(
+    values: CreateListingPayload
+  ): Promise<CreateListingResponse> {
     const { data } = await api.post(`${this.BASE_URL}create/`, values);
     return data;
   },
@@ -44,5 +50,10 @@ export default {
     await api.post(`${this.BASE_URL}${carId}/filesUpload/`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+  },
+
+  async getListingPhotos(carId: number): Promise<GetListingPhotosResponse> {
+    const { data } = await api.get(`${this.BASE_URL}${carId}/files/`);
+    return data;
   },
 };

@@ -1,5 +1,5 @@
-import Title from "@/components/Title";
 import CreateListingForm from "./components/CreateListingForm";
+import Title from "@/components/Title";
 
 export default function CreateListingPage() {
   return (
