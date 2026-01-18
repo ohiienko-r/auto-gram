@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useFiltersStore } from "@/stores/filters-store";
+import { useSearchStore } from "@/stores/search-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { viewport } from "@tma.js/sdk-react";
 
@@ -41,6 +42,7 @@ import Multiselect from "@/components/Multiselect";
 
 export default function SearchForm() {
   const { commonFilters, regions, brands } = useFiltersStore();
+  const { setSearchOpen } = useSearchStore();
   const { bottom } = viewport.safeAreaInsets();
 
   const form = useForm<SearchFormValues>({
@@ -573,7 +575,10 @@ export default function SearchForm() {
               </div>
 
               <Button
-                onClick={() => reset()}
+                onClick={() => {
+                  reset();
+                  setSearchOpen(false);
+                }}
                 variant={"secondary"}
                 className="bg-grey hover:bg-grey/90"
                 type="button"
