@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ["chamois-internal-preferably.ngrok-free.app"],
+    allowedHosts: ["gopher-positive-jaybird.ngrok-free.app"],
   },
 });

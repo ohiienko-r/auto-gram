@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import useMe from "@/hooks/useMe";
 import useMyListings from "./hooks/useMyListings";
 
 import { LISTING_STATUS } from "@/constants/listing";
@@ -13,6 +14,7 @@ import PlusIcon from "@/icons/PlusIcon";
 import { LoaderCircle } from "lucide-react";
 
 export default function ProfilePage() {
+  const { data: me } = useMe();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMyListings();
 
@@ -20,13 +22,13 @@ export default function ProfilePage() {
     const listings = data?.pages.flatMap((page) => page?.results) ?? [];
     return {
       approved: listings.filter(
-        (listing) => listing.status === LISTING_STATUS.APPROVED
+        (listing) => listing.status === LISTING_STATUS.APPROVED,
       ),
       pending: listings.filter(
-        (listing) => listing.status === LISTING_STATUS.PENDING
+        (listing) => listing.status === LISTING_STATUS.PENDING,
       ),
       removed: listings.filter(
-        (listing) => listing.status === LISTING_STATUS.REMOVED
+        (listing) => listing.status === LISTING_STATUS.REMOVED,
       ),
     };
   }, [data]);
@@ -40,9 +42,11 @@ export default function ProfilePage() {
       <section className="flex flex-col gap-8">
         <Card className="flex flex-col gap-8">
           <CardContent>
-            <p className="max-w-64 font-medium text-primary text-base">
-              Щоб виставити авто на продаж, заповніть профіль
-            </p>
+            {me && (!me.first_name || !me.phone_number) && (
+              <p className="max-w-64 font-medium text-primary text-base">
+                Щоб виставити авто на продаж, заповніть профіль
+              </p>
+            )}
 
             <ProfileForm />
           </CardContent>

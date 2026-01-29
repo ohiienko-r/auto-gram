@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import useMe from "@/hooks/useMe";
 import useUpdateProfile from "../hooks/useUpdateProfile";
 
 import {
@@ -11,12 +12,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import EditIcon from "@/icons/EditIcon";
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import { LoaderCircle } from "lucide-react";
 
 export default function ProfileForm() {
+  const { data, isLoading } = useMe();
   const [editing, setEditing] = useState(false);
   const { mutate, isPending } = useUpdateProfile(() => setEditing(false));
 
@@ -27,7 +30,16 @@ export default function ProfileForm() {
     },
   });
 
-  const { control, handleSubmit } = form;
+  const { control, reset, handleSubmit } = form;
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        first_name: data.first_name,
+        phone_number: data.phone_number,
+      });
+    }
+  }, [data, reset]);
 
   return (
     <Form {...form}>
@@ -52,6 +64,8 @@ export default function ProfileForm() {
                     className="h-[43px]"
                     disabled={isPending}
                   />
+                ) : isLoading ? (
+                  <Skeleton className="w-full h-6" />
                 ) : (
                   <p>{field.value || "-"}</p>
                 )}
@@ -90,6 +104,8 @@ export default function ProfileForm() {
                     type="tel"
                     disabled={isPending}
                   />
+                ) : isLoading ? (
+                  <Skeleton className="w-full h-6" />
                 ) : (
                   <p>{field.value || "-"}</p>
                 )}
@@ -102,21 +118,33 @@ export default function ProfileForm() {
 
         <div className="flex justify-start items-center gap-2">
           {editing ? (
-            <button
-              type="submit"
-              disabled={isPending}
-              className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
-            >
-              {isPending ? (
-                <>
-                  Зберігаємо... <LoaderCircle className="animate-spin" />
-                </>
-              ) : (
-                <>
-                  Зберегти <CheckMarkIcon />
-                </>
-              )}
-            </button>
+            <div className="flex flex-1 justify-between items-center">
+              <button
+                type="submit"
+                disabled={isPending}
+                className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
+              >
+                {isPending ? (
+                  <>
+                    Зберігаємо... <LoaderCircle className="animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    Зберегти <CheckMarkIcon />
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                }}
+                className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
+              >
+                Скасувати
+              </button>
+            </div>
           ) : (
             <button
               disabled={isPending}

@@ -32,7 +32,7 @@ export default function useRegions({ enabled = true }: { enabled: boolean }) {
       console.error(
         "Error fetching region filters:",
         axiosError.message,
-        axiosError.response?.data
+        axiosError.response?.data,
       );
     }
   }, [isError, error]);

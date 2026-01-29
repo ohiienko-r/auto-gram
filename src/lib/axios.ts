@@ -30,7 +30,7 @@ api.interceptors.response.use(
           `${api.defaults.baseURL}/api/auth/token/refresh/`,
           {
             refresh: refreshToken,
-          }
+          },
         );
 
         const { access } = response.data;
@@ -48,7 +48,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
