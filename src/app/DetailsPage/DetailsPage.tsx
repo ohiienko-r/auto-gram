@@ -1,7 +1,9 @@
 import { useParams } from "react-router";
+import useMe from "@/hooks/useMe";
 import useListingDetails from "../../hooks/useListingDetails";
 import useToggleListingLike from "@/hooks/useToggleListingLike";
 import { openTelegramLink } from "@tma.js/sdk-react";
+import clsx from "clsx";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -14,12 +16,12 @@ import SpeedometerIcon from "@/icons/SpeedometerIcon";
 import TransmissionIcon from "@/icons/TransmissionIcon";
 import GeoPinIcon from "@/icons/GeoPinIcon";
 import TelegramOutlineIcon from "@/icons/TelegramOutlineIcon";
-import { LoaderCircle } from "lucide-react";
 
 export default function DetailsPage() {
   const { id } = useParams();
+  const { data: me } = useMe();
   const { data, isLoading } = useListingDetails(id);
-  const { mutate, isPending } = useToggleListingLike();
+  const { mutate } = useToggleListingLike();
 
   return (
     <section className="flex flex-col gap-4 px-4 pt-5 overflow-y-auto">
@@ -36,8 +38,8 @@ export default function DetailsPage() {
               data={data?.files.map((file) =>
                 file.replace(
                   "http://localhost:8000",
-                  "https://7tt5472n-8000.euw.devtunnels.ms"
-                )
+                  "https://7tt5472n-8000.euw.devtunnels.ms",
+                ),
               )}
             />
           )}
@@ -66,17 +68,17 @@ export default function DetailsPage() {
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => mutate(Number(id))}
-                className="group size-6 cursor-pointer"
-              >
-                {isPending ? (
-                  <LoaderCircle className="size-6 text-primary animate-spin" />
-                ) : (
-                  <HeartIcon />
-                )}
-              </button>
+              {me?.telegram_id !== data?.owner?.telegram_id && (
+                <button
+                  type="button"
+                  onClick={() => mutate(Number(id))}
+                  className="group size-6 cursor-pointer"
+                >
+                  <HeartIcon
+                    className={clsx(data?.is_liked && "fill-primary")}
+                  />
+                </button>
+              )}
             </div>
 
             <section className="flex flex-col gap-4">
@@ -182,20 +184,17 @@ export default function DetailsPage() {
               <CardContent className="gap-3 py-3">
                 <div className="flex justify-between items-center font-medium text-black/60 text-base">
                   <p>Продавець</p>
-
-                  {/* TODO: Implement when applicable */}
-                  {/* <p>3 роки з нами</p> */}
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2 font-semibold text-2xl">
-                    <h2>{data.owner.name}</h2>
+                    <h2>{data.owner?.first_name}</h2>
                     <p className="text-primary">{data.owner?.phone}</p>
                   </div>
 
                   <Button
                     onClick={() =>
-                      openTelegramLink(`https://t.me/${data.owner?.name}`)
+                      openTelegramLink(`https://t.me/${data.owner?.username}`)
                     }
                   >
                     Написати в Телеграм

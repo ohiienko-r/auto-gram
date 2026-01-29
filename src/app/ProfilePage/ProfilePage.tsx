@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router";
 import useMe from "@/hooks/useMe";
 import useMyListings from "./hooks/useMyListings";
 
+import { ROUTES_NAMES } from "@/constants/router";
 import { LISTING_STATUS } from "@/constants/listing";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,7 @@ export default function ProfilePage() {
   const { data: me } = useMe();
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useMyListings();
+  const navigate = useNavigate();
 
   const { approved, pending, removed } = useMemo(() => {
     const listings = data?.pages.flatMap((page) => page?.results) ?? [];
@@ -71,7 +74,10 @@ export default function ProfilePage() {
                   Авто на продажі ({approved.length})
                 </h3>
 
-                <button className="flex items-center gap-1.5 font-medium text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
+                <button
+                  onClick={() => navigate(ROUTES_NAMES.CREATE_LISTING)}
+                  className="flex items-center gap-1.5 font-medium text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer"
+                >
                   Додати <PlusIcon />
                 </button>
               </div>

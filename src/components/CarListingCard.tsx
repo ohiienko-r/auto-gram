@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import useMe from "@/hooks/useMe";
 import useToggleListingLike from "@/hooks/useToggleListingLike";
 import clsx from "clsx";
 
@@ -29,8 +30,10 @@ export default function CarListingCard({
   gearbox,
   files,
   created_at,
+  owner,
   is_liked,
 }: CarListing) {
+  const { data: me } = useMe();
   const { mutate } = useToggleListingLike();
 
   const handleAddToFavorites = (e: MouseEvent) => {
@@ -47,8 +50,8 @@ export default function CarListingCard({
           data={files.map((file) =>
             file.replace(
               "http://localhost:8000",
-              "https://7tt5472n-8000.euw.devtunnels.ms"
-            )
+              "https://7tt5472n-8000.euw.devtunnels.ms",
+            ),
           )}
         />
 
@@ -64,13 +67,15 @@ export default function CarListingCard({
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleAddToFavorites}
-              className="group size-6 cursor-pointer"
-            >
-              <HeartIcon className={clsx(is_liked && "fill-primary")} />
-            </button>
+            {me?.telegram_id !== owner?.telegram_id && (
+              <button
+                type="button"
+                onClick={handleAddToFavorites}
+                className="group size-6 cursor-pointer"
+              >
+                <HeartIcon className={clsx(is_liked && "fill-primary")} />
+              </button>
+            )}
           </div>
 
           <section className="flex flex-col gap-4">

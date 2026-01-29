@@ -42,9 +42,10 @@ export interface CarListing {
 }
 
 export interface Owner {
-  name: string;
+  first_name: string | null;
   phone: string | null;
   telegram_id: number;
+  username: string;
 }
 
 export interface MyCarListing {

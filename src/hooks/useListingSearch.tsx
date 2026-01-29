@@ -20,7 +20,7 @@ export default function useListingSearch(query?: string) {
       searchService.search({
         query,
         offset: pageParam,
-        limit: 2,
+        limit: 10,
       }),
     getNextPageParam: (lastPage) => {
       const { offset, limit, count } = lastPage;
@@ -36,7 +36,7 @@ export default function useListingSearch(query?: string) {
       console.error(
         "Error fetching search results:",
         axiosError?.message,
-        axiosError?.response?.data
+        axiosError?.response?.data,
       );
     }
   }, [isError, error]);
