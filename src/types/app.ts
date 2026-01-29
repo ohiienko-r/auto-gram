@@ -39,6 +39,7 @@ export interface CarListing {
   created_at: string;
   is_liked: boolean;
   owner: Owner | null;
+  vin_number: string;
 }
 
 export interface Owner {

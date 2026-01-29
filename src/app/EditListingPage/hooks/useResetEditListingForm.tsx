@@ -33,31 +33,31 @@ export default function useResetEditListingForm({
       if (details) {
         const carBrand = brands?.find((brand) => brand.label === details.brand);
         const carModel = carBrandModels?.find(
-          (model) => model.label === details.model
+          (model) => model.label === details.model,
         );
         const typeOfCar = commonFilters?.type_of_car?.find(
-          (type) => type.name === details.type_of_car
+          (type) => type.name === details.type_of_car,
         );
         const carCondition = commonFilters?.condition.find(
-          (condition) => condition.name === details.condition
+          (condition) => condition.name === details.condition,
         );
         const carRegion = regions?.find(
-          (region) => region.label === details?.region
+          (region) => region.label === details?.region,
         );
         const carSettlement = settlements?.find(
-          (settlement) => settlement.name === details?.settlement
+          (settlement) => settlement.name === details?.settlement,
         );
         const carFuelType = commonFilters?.fuel_type?.find(
-          (fuelType) => fuelType.name === details?.fuel_type
+          (fuelType) => fuelType.name === details?.fuel_type,
         );
         const carGearbox = commonFilters?.gearbox?.find(
-          (gearbox) => gearbox.name === details?.gearbox
+          (gearbox) => gearbox.name === details?.gearbox,
         );
         const carBodyType = commonFilters?.body_type?.find(
-          (body) => body.name === details?.body_type
+          (body) => body.name === details?.body_type,
         );
         const carDriveType = commonFilters?.drive_type?.find(
-          (driveType) => driveType?.value === details?.drive_type
+          (driveType) => driveType?.value === details?.drive_type,
         );
 
         reset({
@@ -76,6 +76,7 @@ export default function useResetEditListingForm({
           body_type: carBodyType?.id,
           drive_type: carDriveType?.value,
           year: details?.year,
+          vin_number: details?.vin_number || "",
         });
       }
 

@@ -34,14 +34,7 @@ export default function DetailsPage() {
           {isLoading ? (
             <Skeleton className="rounded-2xl w-full h-[220px]" />
           ) : (
-            <ListingPhotosCarousel
-              data={data?.files.map((file) =>
-                file.replace(
-                  "http://localhost:8000",
-                  "https://7tt5472n-8000.euw.devtunnels.ms",
-                ),
-              )}
-            />
+            <ListingPhotosCarousel data={data?.files || []} />
           )}
 
           <CardContent className="gap-6 py-3">

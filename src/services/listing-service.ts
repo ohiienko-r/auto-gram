@@ -40,11 +40,13 @@ export default {
   },
 
   async createListing(
-    values: CreateListingPayload
+    values: CreateListingPayload,
   ): Promise<CreateListingResponse> {
     const { data } = await api.post(`${this.BASE_URL}create/`, values);
     return data;
   },
+
+  async updateListing() {},
 
   async uploadListingPhotos(carId: number, formData: FormData) {
     await api.post(`${this.BASE_URL}${carId}/filesUpload/`, formData, {
