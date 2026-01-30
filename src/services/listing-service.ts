@@ -62,6 +62,10 @@ export default {
     await api.patch(`${this.BASE_URL}${carId}/update/`, values);
   },
 
+  async deleteListing(carId: number) {
+    await api.delete(`${this.BASE_URL}${carId}/delete/`);
+  },
+
   async uploadListingPhotos(carId: number, formData: FormData) {
     await api.post(`${this.BASE_URL}${carId}/filesUpload/`, formData, {
       headers: { "Content-Type": "multipart/form-data" },

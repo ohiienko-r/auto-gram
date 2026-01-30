@@ -57,7 +57,10 @@ export default function useUpdateListing() {
     },
     onSuccess: () => {
       toast.success("Оголошення оновлено успішно");
+
       queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["listingsSearch"] });
+
       navigate(-1);
     },
     onError: (error) => {

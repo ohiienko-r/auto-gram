@@ -71,3 +71,7 @@ export interface GetEditListingDetailsResponse {
     status: SelectOptionGroup;
   };
 }
+
+export type PhotoItem =
+  | ListingPhotos
+  | { id: string; url: File | string; name?: string };

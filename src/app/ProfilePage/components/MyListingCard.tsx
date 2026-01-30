@@ -7,10 +7,10 @@ import type { MyCarListing } from "@/types/app";
 
 import { Card, CardContent } from "@/components/Card";
 import RemoveListingButtonWidthModal from "./RemoveListingButtonWithModal";
+import DeleteListingButtonWidthModal from "./DeleteListingButtonWithModal";
 
 import EyeIcon from "@/icons/EyeIcon";
 import EditIcon from "@/icons/EditIcon";
-import TrashIcon from "@/icons/TrashIcon";
 
 export default function MyListingCard({
   id,
@@ -85,9 +85,7 @@ export default function MyListingCard({
               <RemoveListingButtonWidthModal id={id} />
             )}
 
-            <button className="flex items-center gap-1.5 font-semibold text-primary hover:text-primary/80 active:text-primary/80 text-base transition-colors cursor-pointer">
-              Видалити <TrashIcon />
-            </button>
+            <DeleteListingButtonWidthModal id={id} />
           </div>
         </section>
       </CardContent>

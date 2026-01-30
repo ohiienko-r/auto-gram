@@ -11,7 +11,7 @@ import useUpdateListing from "../hooks/useUpdateListing";
 
 import { getUpdateValues } from "../utils/utils";
 
-import type { ListingPhotos } from "@/types/listing";
+import type { ListingPhotos, PhotoItem } from "@/types/listing";
 
 import { viewport } from "@tma.js/sdk-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,10 +39,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import { LoaderCircle } from "lucide-react";
-
-type PhotoItem =
-  | ListingPhotos
-  | { id: string; url: File | string; name?: string };
 
 export default function EditListingForm() {
   const [existingPhotos, setExistingPhotos] = useState<ListingPhotos[]>([]);
