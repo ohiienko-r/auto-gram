@@ -119,6 +119,11 @@ export default function CreateListingForm() {
     return years;
   }, [commonFilters]);
 
+  const isCreatingListing = useMemo(
+    () => isPending || isUploadingPhotos,
+    [isPending, isUploadingPhotos],
+  );
+
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
       <Form {...form}>
@@ -157,6 +162,7 @@ export default function CreateListingForm() {
 
                   <Select
                     listTitle="Марка"
+                    disabled={isCreatingListing}
                     options={brands ?? []}
                     value={field.value ? String(field.value) : null}
                     onChange={(val) => {
@@ -180,7 +186,7 @@ export default function CreateListingForm() {
                   <FormLabel>Модель*</FormLabel>
 
                   <Select
-                    disabled={isModelsLoading || !carBrand}
+                    disabled={isModelsLoading || !carBrand || isCreatingListing}
                     isLoading={isModelsLoading}
                     listTitle="Модель"
                     options={carBrandModels}
@@ -208,7 +214,12 @@ export default function CreateListingForm() {
                     <FormLabel>Ціна $</FormLabel>
 
                     <FormControl>
-                      <Input placeholder="Ціна USD" type="number" {...field} />
+                      <Input
+                        placeholder="Ціна USD"
+                        type="number"
+                        {...field}
+                        disabled={isCreatingListing}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -225,6 +236,7 @@ export default function CreateListingForm() {
                       <Toggle
                         pressed={field.value}
                         onPressedChange={field.onChange}
+                        disabled={isCreatingListing}
                       >
                         Можливен торг
                       </Toggle>
@@ -244,6 +256,7 @@ export default function CreateListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
+                      disabled={isCreatingListing}
                       value={String(field.value)}
                       onValueChange={(val) => {
                         if (!Number.isNaN(val)) {
@@ -275,6 +288,7 @@ export default function CreateListingForm() {
 
                   <ToggleGroup
                     type="single"
+                    disabled={isCreatingListing}
                     value={String(field.value)}
                     onValueChange={(val) => {
                       if (!Number.isNaN(val)) {
@@ -309,7 +323,7 @@ export default function CreateListingForm() {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={noMilage}
+                        disabled={noMilage || isCreatingListing}
                         placeholder="тис. км."
                         type="number"
                       />
@@ -327,6 +341,7 @@ export default function CreateListingForm() {
                   <FormItem className="justify-items-start">
                     <FormControl>
                       <Toggle
+                        disabled={isCreatingListing}
                         pressed={field.value}
                         onPressedChange={(val) => {
                           field.onChange(val);
@@ -353,6 +368,7 @@ export default function CreateListingForm() {
 
                   <Select
                     listTitle="Регіон"
+                    disabled={isCreatingListing}
                     options={regions ?? []}
                     value={field.value ? String(field.value) : null}
                     onChange={(val) => {
@@ -376,7 +392,9 @@ export default function CreateListingForm() {
                   <FormLabel>Населений пункт*</FormLabel>
 
                   <Select
-                    disabled={isSettlementsLoading || !region}
+                    disabled={
+                      isSettlementsLoading || !region || isCreatingListing
+                    }
                     isLoading={isSettlementsLoading}
                     listTitle="Населений пункт"
                     options={settlementsOptions ?? []}
@@ -405,6 +423,7 @@ export default function CreateListingForm() {
                   <FormControl>
                     <Input
                       type="number"
+                      disabled={isCreatingListing}
                       placeholder="Об'єм двигуна (л.)"
                       {...field}
                     />
@@ -425,6 +444,7 @@ export default function CreateListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
+                      disabled={isCreatingListing}
                       value={String(field.value)}
                       onValueChange={(val) => {
                         if (!Number.isNaN(val)) {
@@ -452,6 +472,7 @@ export default function CreateListingForm() {
             <FormField
               control={control}
               name="gearbox"
+              disabled={isCreatingListing}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Коробка передач</FormLabel>
@@ -491,6 +512,7 @@ export default function CreateListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
+                      disabled={isCreatingListing}
                       value={String(field.value)}
                       onValueChange={(val) => {
                         if (!Number.isNaN(val)) {
@@ -523,6 +545,7 @@ export default function CreateListingForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
+                      disabled={isCreatingListing}
                       value={field.value}
                       onValueChange={field.onChange}
                       className="flex flex-wrap items-center gap-2"
@@ -550,6 +573,7 @@ export default function CreateListingForm() {
 
                   <Select
                     listTitle="Рік виробництва"
+                    disabled={isCreatingListing}
                     options={productionYearOptions}
                     value={field.value ? String(field.value) : null}
                     onChange={(val) => {
@@ -574,7 +598,11 @@ export default function CreateListingForm() {
                   <FormLabel>VIN номер</FormLabel>
 
                   <FormControl>
-                    <Input placeholder="VIN номер" {...field} />
+                    <Input
+                      placeholder="VIN номер"
+                      {...field}
+                      disabled={isCreatingListing}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -589,6 +617,7 @@ export default function CreateListingForm() {
           >
             <Button
               type="button"
+              disabled={isCreatingListing}
               variant={"secondary"}
               className="bg-grey hover:bg-grey/90"
               onClick={() => navigate(-1)}
@@ -599,9 +628,9 @@ export default function CreateListingForm() {
             <Button
               type="submit"
               form="listing-form"
-              disabled={isPending || isUploadingPhotos}
+              disabled={isCreatingListing || isUploadingPhotos}
             >
-              {isPending || isUploadingPhotos ? (
+              {isCreatingListing ? (
                 <>
                   Збереження... <LoaderCircle className="size-4 animate-spin" />
                 </>
