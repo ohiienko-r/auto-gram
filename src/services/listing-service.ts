@@ -5,6 +5,8 @@ import type {
   CreateListingResponse,
   CreateListingPayload,
   GetListingPhotosResponse,
+  GetEditListingDetailsResponse,
+  UpdateListingPayload,
 } from "@/types/listing";
 
 export default {
@@ -12,6 +14,13 @@ export default {
 
   async getListingDetails(id: number): Promise<CarListing> {
     const { data } = await api.get(`${this.BASE_URL}${id}/`);
+    return data;
+  },
+
+  async getEditListingDetails(
+    id?: number,
+  ): Promise<GetEditListingDetailsResponse> {
+    const { data } = await api.get(`${this.BASE_URL}${id}/getDataForEdit/`);
     return data;
   },
 
@@ -46,7 +55,12 @@ export default {
     return data;
   },
 
-  async updateListing() {},
+  async updateListing(
+    carId: number,
+    values: Partial<UpdateListingPayload>,
+  ): Promise<void> {
+    await api.patch(`${this.BASE_URL}${carId}/update/`, values);
+  },
 
   async uploadListingPhotos(carId: number, formData: FormData) {
     await api.post(`${this.BASE_URL}${carId}/filesUpload/`, formData, {

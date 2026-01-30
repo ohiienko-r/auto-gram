@@ -5,9 +5,11 @@ import { useFiltersStore } from "@/stores/filters-store";
 import useModels from "@/hooks/filters/useModels";
 import useSettlements from "@/hooks/filters/useSettlements";
 import useListingPhotos from "../hooks/useListingPhotos";
-import useListingDetails from "@/hooks/useListingDetails";
+import useGetEditListingDetails from "../hooks/useGetEditListingDetails";
 import useResetEditListingForm from "../hooks/useResetEditListingForm";
-import useDeleteListingPhotos from "../hooks/useDeleteListingPhotos";
+import useUpdateListing from "../hooks/useUpdateListing";
+
+import { getUpdateValues } from "../utils/utils";
 
 import type { ListingPhotos } from "@/types/listing";
 
@@ -51,9 +53,12 @@ export default function EditListingForm() {
 
   const { data: listingPhotos, isLoading: loadingListingPhotos } =
     useListingPhotos(id);
-  const { data: details, isLoading: loadingDetails } = useListingDetails(id);
+  const { data: details, isLoading: loadingDetails } = useGetEditListingDetails(
+    Number(id),
+  );
   const { commonFilters, regions, brands } = useFiltersStore();
-  const { mutateAsync, isPending } = useDeleteListingPhotos();
+  const { mutateAsync: updateListing, isPending: isUpdatingListing } =
+    useUpdateListing();
 
   const { bottom } = viewport.safeAreaInsets();
   const navigate = useNavigate();
@@ -63,9 +68,7 @@ export default function EditListingForm() {
     defaultValues: {
       newPhotos: [],
       brand: null,
-      model: null,
       region: null,
-      settlement: null,
       year: null,
       price: "",
       bargaining: false,
@@ -110,10 +113,15 @@ export default function EditListingForm() {
     if (typeof itemToRemoveId === "number") {
       setRemovePhotos((prev) => [...prev, itemToRemoveId]);
       setExistingPhotos((prev) =>
-        prev.filter((photo) => photo.id !== itemToRemoveId)
+        prev.filter((photo) => photo.id !== itemToRemoveId),
       );
     } else {
-      removeNewPhoto(index);
+      const newPhotoIndex = newPhotos.findIndex(
+        (photo) => photo.id === itemToRemoveId,
+      );
+      if (newPhotoIndex !== -1) {
+        removeNewPhoto(newPhotoIndex);
+      }
     }
   };
 
@@ -129,7 +137,7 @@ export default function EditListingForm() {
         label: model.name,
         value: String(model.id),
       })) || [],
-    [models]
+    [models],
   );
 
   const settlementsOptions = useMemo(
@@ -138,7 +146,7 @@ export default function EditListingForm() {
         label: settlement.name,
         value: String(settlement.id),
       })) || [],
-    [settlements]
+    [settlements],
   );
 
   const productionYearOptions = useMemo(() => {
@@ -173,13 +181,34 @@ export default function EditListingForm() {
 
   const isLoading = useMemo(
     () => loadingListingPhotos || loadingDetails || resetting,
-    [loadingListingPhotos, loadingDetails, resetting]
+    [loadingListingPhotos, loadingDetails, resetting],
   );
 
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
       <Form {...form}>
-        <form id="edit-listing-form" className="flex flex-col gap-8">
+        <form
+          id="edit-listing-form"
+          className="flex flex-col gap-8"
+          onSubmit={handleSubmit(async (formValues) => {
+            const payload = {
+              ...formValues,
+              price: Number(formValues.price),
+              mileage: Number(formValues.mileage),
+            };
+
+            if (!details) return;
+
+            const updateValues = getUpdateValues(payload, details);
+
+            await updateListing({
+              carId: details.values.id,
+              values: updateValues,
+              newPhotos: newPhotos,
+              removePhotos: removePhotos,
+            });
+          }, console.warn)}
+        >
           <div className="flex flex-col gap-2">
             {isLoading ? (
               <Skeleton className="rounded-2xl w-full h-[220px]" />
@@ -191,9 +220,11 @@ export default function EditListingForm() {
               />
             )}
 
-            {/* {mergedContent.length === 0 && !loadingListingPhotos && (
-              <FormMessage>Додайте хоча б одне фото автомобіля</FormMessage>
-            )} */}
+            {mergedContent.length === 0 &&
+              !loadingListingPhotos &&
+              !resetting && (
+                <FormMessage>Додайте хоча б одне фото автомобіля</FormMessage>
+              )}
           </div>
 
           <CardContent className="pt-0">
@@ -209,6 +240,7 @@ export default function EditListingForm() {
                   ) : (
                     <Select
                       listTitle="Марка"
+                      disabled={isUpdatingListing}
                       options={brands ?? []}
                       value={field.value ? String(field.value) : null}
                       onChange={(val) => {
@@ -236,7 +268,9 @@ export default function EditListingForm() {
                     <Skeleton className="rounded-md w-full h-[35px]" />
                   ) : (
                     <Select
-                      disabled={isModelsLoading || !carBrand}
+                      disabled={
+                        isModelsLoading || !carBrand || isUpdatingListing
+                      }
                       isLoading={isModelsLoading}
                       listTitle="Модель"
                       options={carBrandModels}
@@ -271,6 +305,7 @@ export default function EditListingForm() {
                         <Input
                           placeholder="Ціна USD"
                           type="number"
+                          disabled={isUpdatingListing}
                           {...field}
                         />
                       )}
@@ -289,6 +324,7 @@ export default function EditListingForm() {
                     <FormControl>
                       {!isLoading && (
                         <Toggle
+                          disabled={isUpdatingListing}
                           pressed={field.value}
                           onPressedChange={field.onChange}
                         >
@@ -314,6 +350,7 @@ export default function EditListingForm() {
                     ) : (
                       <ToggleGroup
                         type="single"
+                        disabled={isUpdatingListing}
                         value={String(field.value)}
                         onValueChange={(val) => {
                           if (!Number.isNaN(val)) {
@@ -349,6 +386,7 @@ export default function EditListingForm() {
                   ) : (
                     <ToggleGroup
                       type="single"
+                      disabled={isUpdatingListing}
                       value={String(field.value)}
                       onValueChange={(val) => {
                         if (!Number.isNaN(val)) {
@@ -387,7 +425,7 @@ export default function EditListingForm() {
                       ) : (
                         <Input
                           {...field}
-                          disabled={noMilage}
+                          disabled={noMilage || isUpdatingListing}
                           placeholder="тис. км."
                           type="number"
                         />
@@ -407,6 +445,7 @@ export default function EditListingForm() {
                     <FormControl>
                       {!isLoading && (
                         <Toggle
+                          disabled={isUpdatingListing}
                           pressed={field.value}
                           onPressedChange={(val) => {
                             field.onChange(val);
@@ -437,6 +476,7 @@ export default function EditListingForm() {
                   ) : (
                     <Select
                       listTitle="Регіон"
+                      disabled={isUpdatingListing}
                       options={regions ?? []}
                       value={field.value ? String(field.value) : null}
                       onChange={(val) => {
@@ -464,7 +504,9 @@ export default function EditListingForm() {
                     <Skeleton className="rounded-md w-full h-[35px]" />
                   ) : (
                     <Select
-                      disabled={isSettlementsLoading || !region}
+                      disabled={
+                        isSettlementsLoading || !region || isUpdatingListing
+                      }
                       isLoading={isSettlementsLoading}
                       listTitle="Населений пункт"
                       options={settlementsOptions ?? []}
@@ -498,6 +540,7 @@ export default function EditListingForm() {
                       <Input
                         type="number"
                         placeholder="Об'єм двигуна (л.)"
+                        disabled={isUpdatingListing}
                         {...field}
                       />
                     )}
@@ -521,6 +564,7 @@ export default function EditListingForm() {
                     ) : (
                       <ToggleGroup
                         type="single"
+                        disabled={isUpdatingListing}
                         value={String(field.value)}
                         onValueChange={(val) => {
                           if (!Number.isNaN(val)) {
@@ -559,6 +603,7 @@ export default function EditListingForm() {
                     <FormControl>
                       <ToggleGroup
                         type="single"
+                        disabled={isUpdatingListing}
                         value={String(field.value)}
                         onValueChange={(val) => {
                           if (!Number.isNaN(val)) {
@@ -595,6 +640,7 @@ export default function EditListingForm() {
                     ) : (
                       <ToggleGroup
                         type="single"
+                        disabled={isUpdatingListing}
                         value={String(field.value)}
                         onValueChange={(val) => {
                           if (!Number.isNaN(val)) {
@@ -633,6 +679,7 @@ export default function EditListingForm() {
                         type="single"
                         value={field.value}
                         onValueChange={field.onChange}
+                        disabled={isUpdatingListing}
                         className="flex flex-wrap items-center gap-2"
                       >
                         {commonFilters?.drive_type.map((option) => (
@@ -663,6 +710,7 @@ export default function EditListingForm() {
                     <Select
                       listTitle="Рік виробництва"
                       options={productionYearOptions}
+                      disabled={isUpdatingListing}
                       value={field.value ? String(field.value) : null}
                       onChange={(val) => {
                         if (!Number.isNaN(val)) {
@@ -690,7 +738,11 @@ export default function EditListingForm() {
                     {isLoading ? (
                       <Skeleton className="rounded-md w-full h-[35px]" />
                     ) : (
-                      <Input placeholder="VIN номер" {...field} />
+                      <Input
+                        placeholder="VIN номер"
+                        {...field}
+                        disabled={isUpdatingListing}
+                      />
                     )}
                   </FormControl>
 
@@ -715,48 +767,16 @@ export default function EditListingForm() {
 
             <Button
               type="submit"
-              form="listing-form"
-              disabled={isLoading}
-              onClick={handleSubmit(async (formValues) => {
-                // TODO: UPDATE and TEST when new endpoin is applicable
-                const payload = {
-                  ...formValues,
-                  price: Number(formValues.price),
-                  mileage: Number(formValues.mileage),
-                };
-
-                if (!details) return;
-
-                const updateValues = Object.entries(payload)?.reduce(
-                  (acc, [key, value]) => {
-                    if (!Object.hasOwn(details, key)) return acc;
-
-                    const originalValue = details[key as keyof typeof details];
-
-                    if (value != originalValue) {
-                      if (!value && !originalValue) return acc;
-                      const isBothEmpty =
-                        (value === "" || value === null) &&
-                        (originalValue === "" || originalValue === null);
-
-                      if (!isBothEmpty) {
-                        return { ...acc, [key]: value };
-                      }
-
-                      return { ...acc, [key]: value };
-                    }
-
-                    return acc;
-                  },
-                  {} as Partial<typeof formValues>
-                );
-
-                if (removePhotos.length > 0) {
-                  await mutateAsync(removePhotos);
-                }
-              }, console.warn)}
+              form="edit-listing-form"
+              disabled={isLoading || isUpdatingListing}
             >
-              Зберегти
+              {isUpdatingListing ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                <>
+                  Зберегти <CheckMarkIcon />
+                </>
+              )}
             </Button>
           </div>
         </form>

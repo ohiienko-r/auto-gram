@@ -87,7 +87,7 @@ export default function CreateListingForm() {
         label: model.name,
         value: String(model.id),
       })) || [],
-    [models]
+    [models],
   );
 
   const settlementsOptions = useMemo(
@@ -96,7 +96,7 @@ export default function CreateListingForm() {
         label: settlement.name,
         value: String(settlement.id),
       })) || [],
-    [settlements]
+    [settlements],
   );
 
   const productionYearOptions = useMemo(() => {
@@ -122,7 +122,19 @@ export default function CreateListingForm() {
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
       <Form {...form}>
-        <form id="listing-form" className="flex flex-col gap-8">
+        <form
+          id="listing-form"
+          className="flex flex-col gap-8"
+          onSubmit={handleSubmit((formValues) => {
+            const payload = {
+              ...formValues,
+              price: Number(formValues.price),
+              mileage: Number(formValues.mileage),
+            };
+
+            mutate(payload);
+          }, console.warn)}
+        >
           <div className="flex flex-col gap-2">
             <ListingPhotosCarouselWithFileUpload
               data={fields}
@@ -588,15 +600,6 @@ export default function CreateListingForm() {
               type="submit"
               form="listing-form"
               disabled={isPending || isUploadingPhotos}
-              onClick={handleSubmit((formValues) => {
-                const payload = {
-                  ...formValues,
-                  price: Number(formValues.price),
-                  mileage: Number(formValues.mileage),
-                };
-
-                mutate(payload);
-              }, console.warn)}
             >
               {isPending || isUploadingPhotos ? (
                 <>

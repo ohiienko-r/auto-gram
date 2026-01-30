@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import useUploadListingPhotos from "./useUploadListingPhotos";
+import useUploadListingPhotos from "@/hooks/useUploadListingPhotos";
 import { toast } from "sonner";
 
 import listingService from "@/services/listing-service";
@@ -26,7 +26,7 @@ export default function useCreateListing() {
       formValues.photos.forEach((photo) => {
         formData.append(
           formValues.photos.length > 1 ? "files" : "file",
-          photo.url
+          photo.url,
         );
       });
 
@@ -43,7 +43,7 @@ export default function useCreateListing() {
       console.error(
         "Failed to create listing",
         error.message,
-        error?.response?.data
+        error?.response?.data,
       );
       toast.error("Не вдалося створити оголошення");
     },
