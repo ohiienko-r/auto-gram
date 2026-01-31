@@ -8,6 +8,7 @@ import MainPage from "@/app/MainPage/MainPage";
 import FavoritesPage from "@/app/FavoritesPage/FavoritesPage";
 import DetailsPage from "@/app/DetailsPage/DetailsPage";
 import ProfilePage from "@/app/ProfilePage/ProfilePage";
+import SearchPage from "@/app/SearchPage/SearchPage";
 import CreateListingPage from "@/app/CreateListingPage/CreateListingPage";
 import EditListingPage from "@/app/EditListingPage/EditListingPage";
 
@@ -33,6 +34,7 @@ export default function Router() {
               path={`${ROUTES_NAMES.EDIT_LISTING}/:id`}
               element={<EditListingPage />}
             />
+            <Route path={ROUTES_NAMES.SEARCH} element={<SearchPage />} />
           </Route>
         </Route>
       </Routes>

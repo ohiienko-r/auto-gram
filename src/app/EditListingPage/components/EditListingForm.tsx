@@ -8,6 +8,7 @@ import useListingPhotos from "../hooks/useListingPhotos";
 import useGetEditListingDetails from "../hooks/useGetEditListingDetails";
 import useResetEditListingForm from "../hooks/useResetEditListingForm";
 import useUpdateListing from "../hooks/useUpdateListing";
+import clsx from "clsx";
 
 import { getUpdateValues } from "../utils/utils";
 
@@ -41,6 +42,7 @@ import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import { LoaderCircle } from "lucide-react";
 
 export default function EditListingForm() {
+  const [inputFocused, setInputFocused] = useState(false);
   const [existingPhotos, setExistingPhotos] = useState<ListingPhotos[]>([]);
   const [removePhotos, setRemovePhotos] = useState<number[]>([]);
   const [mergedContent, setMergedContent] = useState<PhotoItem[]>([]);
@@ -180,6 +182,14 @@ export default function EditListingForm() {
     [loadingListingPhotos, loadingDetails, resetting],
   );
 
+  const handleInputFocus = () => {
+    setInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setInputFocused(false);
+  };
+
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
       <Form {...form}>
@@ -303,6 +313,8 @@ export default function EditListingForm() {
                           type="number"
                           disabled={isUpdatingListing}
                           {...field}
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
                         />
                       )}
                     </FormControl>
@@ -424,6 +436,8 @@ export default function EditListingForm() {
                           disabled={noMilage || isUpdatingListing}
                           placeholder="тис. км."
                           type="number"
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
                         />
                       )}
                     </FormControl>
@@ -538,6 +552,8 @@ export default function EditListingForm() {
                         placeholder="Об'єм двигуна (л.)"
                         disabled={isUpdatingListing}
                         {...field}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     )}
                   </FormControl>
@@ -738,6 +754,8 @@ export default function EditListingForm() {
                         placeholder="VIN номер"
                         {...field}
                         disabled={isUpdatingListing}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     )}
                   </FormControl>
@@ -749,7 +767,10 @@ export default function EditListingForm() {
           </CardContent>
 
           <div
-            className="bottom-0 left-0 fixed items-center gap-3 grid grid-cols-2 bg-white px-8.5 pt-5 border-grey border-t rounded-t-2xl w-full"
+            className={clsx(
+              "left-0 fixed items-center gap-3 grid grid-cols-2 bg-white px-8.5 pt-5 border-grey border-t rounded-t-2xl w-full transition-all",
+              inputFocused ? "-bottom-4/5" : "bottom-0",
+            )}
             style={{ paddingBottom: bottom || "20px" }}
           >
             <Button

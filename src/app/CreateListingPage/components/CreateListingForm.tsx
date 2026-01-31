@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useFiltersStore } from "@/stores/filters-store";
@@ -11,6 +11,7 @@ import {
   CreateListingFormSchema,
   type CreateListingFormValues,
 } from "../validation/validation";
+import clsx from "clsx";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -32,6 +33,7 @@ import CheckMarkIcon from "@/icons/CheckMarkIcon";
 import { LoaderCircle } from "lucide-react";
 
 export default function CreateListingForm() {
+  const [inputFocused, setInputFocused] = useState(false);
   const { commonFilters, regions, brands } = useFiltersStore();
   const { mutate, isPending, isUploadingPhotos } = useCreateListing();
   const { bottom } = viewport.safeAreaInsets();
@@ -124,6 +126,14 @@ export default function CreateListingForm() {
     () => isPending || isUploadingPhotos,
     [isPending, isUploadingPhotos],
   );
+
+  const handleInputFocus = () => {
+    setInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setInputFocused(false);
+  };
 
   return (
     <Card style={{ paddingBottom: (bottom || 20) + 90 }}>
@@ -220,6 +230,8 @@ export default function CreateListingForm() {
                         type="number"
                         {...field}
                         disabled={isCreatingListing}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     </FormControl>
 
@@ -327,6 +339,8 @@ export default function CreateListingForm() {
                         disabled={noMilage || isCreatingListing}
                         placeholder="тис. км."
                         type="number"
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     </FormControl>
 
@@ -427,6 +441,8 @@ export default function CreateListingForm() {
                       disabled={isCreatingListing}
                       placeholder="Об'єм двигуна (л.)"
                       {...field}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                     />
                   </FormControl>
 
@@ -603,6 +619,8 @@ export default function CreateListingForm() {
                       placeholder="VIN номер"
                       {...field}
                       disabled={isCreatingListing}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                     />
                   </FormControl>
 
@@ -613,7 +631,10 @@ export default function CreateListingForm() {
           </CardContent>
 
           <div
-            className="bottom-0 left-0 fixed items-center gap-3 grid grid-cols-2 bg-white px-8.5 pt-5 border-grey border-t rounded-t-2xl w-full"
+            className={clsx(
+              "left-0 fixed items-center gap-3 grid grid-cols-2 bg-white px-8.5 pt-5 border-grey border-t rounded-t-2xl w-full transition-all",
+              inputFocused ? "-bottom-4/5" : "bottom-0 ",
+            )}
             style={{ paddingBottom: bottom || "20px" }}
           >
             <Button

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useFiltersStore } from "@/stores/filters-store";
 import { useSearchStore } from "@/stores/search-store";
@@ -6,6 +6,7 @@ import useModels from "@/hooks/filters/useModels";
 import useSettlements from "@/hooks/filters/useSettlements";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { viewport } from "@tma.js/sdk-react";
+import clsx from "clsx";
 
 import {
   SearchFormValidationSchema,
@@ -32,6 +33,7 @@ import "react-range-slider-input/dist/style.css";
 import { SaveIcon } from "lucide-react";
 
 export default function SearchForm() {
+  const [inputFocused, setInputFocused] = useState(false);
   const { commonFilters, regions, brands } = useFiltersStore();
   const { setSearchOpen, formValues, setFormValues } = useSearchStore();
   const { bottom } = viewport.safeAreaInsets();
@@ -79,6 +81,14 @@ export default function SearchForm() {
       })) || [],
     [settlements],
   );
+
+  const handleInputFocus = () => {
+    setInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setInputFocused(false);
+  };
 
   return (
     <Card>
@@ -154,6 +164,8 @@ export default function SearchForm() {
                               field.onChange([e.target.value, field.value?.[1]])
                             }
                             type="number"
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                           />
 
                           <Input
@@ -163,6 +175,8 @@ export default function SearchForm() {
                               field.onChange([field.value?.[0], e.target.value])
                             }
                             type="number"
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                           />
                         </div>
                       </div>
@@ -494,6 +508,8 @@ export default function SearchForm() {
                         placeholder="Від"
                         type="number"
                         min={commonFilters?.ranges?.year?.min}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     </FormControl>
                   </FormItem>
@@ -518,6 +534,8 @@ export default function SearchForm() {
                         placeholder="До"
                         type="number"
                         max={commonFilters?.ranges?.year?.max}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                       />
                     </FormControl>
                   </FormItem>
@@ -544,6 +562,8 @@ export default function SearchForm() {
                       placeholder="Максимальний пробіг (тис. км)"
                       type="number"
                       max={commonFilters?.ranges?.mileage?.max}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
                     />
                   </FormControl>
                 </FormItem>
@@ -551,8 +571,13 @@ export default function SearchForm() {
             />
 
             <div
-              className="bottom-0 left-0 fixed flex items-center gap-1.5 bg-white px-4 pt-5 border-grey border-t rounded-t-2xl w-full"
-              style={{ paddingBottom: bottom || "20px" }}
+              className={clsx(
+                "left-0 fixed flex items-center gap-1.5 bg-white px-4 pt-5 border-grey border-t rounded-t-2xl w-full transition-all",
+                inputFocused ? "-bottom-4/5" : "bottom-0 ",
+              )}
+              style={{
+                paddingBottom: bottom || "20px",
+              }}
             >
               <Button type="button" className="rounded-full w-12 h-12">
                 <SaveIcon />
