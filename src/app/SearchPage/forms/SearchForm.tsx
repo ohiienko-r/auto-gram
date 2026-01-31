@@ -1,6 +1,9 @@
-import { useForm } from "react-hook-form";
+import { useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useFiltersStore } from "@/stores/filters-store";
 import { useSearchStore } from "@/stores/search-store";
+import useModels from "@/hooks/filters/useModels";
+import useSettlements from "@/hooks/filters/useSettlements";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { viewport } from "@tma.js/sdk-react";
 
@@ -8,20 +11,6 @@ import {
   SearchFormValidationSchema,
   type SearchFormValues,
 } from "../validation/validation";
-
-import {
-  CAR_BRANDS_OPTIONS,
-  CAR_CONDITION,
-  CAR_ACCIDENT,
-  CAR_ACCIDENT_OPTIONS,
-  FUEL_TYPE,
-  TRANSMISSION_TYPE,
-  BODY_TYPE,
-  SUSPENSION_TYPE,
-  SUSPENSION_TYPE_OPTIONS,
-  DRIVE_TYPE,
-  CAR_COUNTRIES_OPTIONS,
-} from "@/constants/transport";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -34,44 +23,62 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import Select from "@/components/Select";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-import Multiselect from "@/components/Multiselect";
+
+import { SaveIcon } from "lucide-react";
 
 export default function SearchForm() {
   const { commonFilters, regions, brands } = useFiltersStore();
-  const { setSearchOpen } = useSearchStore();
+  const { setSearchOpen, formValues, setFormValues } = useSearchStore();
   const { bottom } = viewport.safeAreaInsets();
 
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(SearchFormValidationSchema),
-    defaultValues: {
-      priceRange: [0, commonFilters?.ranges?.price?.max],
-      possibleBargain: false,
-      carBrands: [],
-      carModels: [],
-      condition: CAR_CONDITION.ALL,
-      carAccident: CAR_ACCIDENT.ALL,
-      fuelType: FUEL_TYPE.ALL,
-      transmission: TRANSMISSION_TYPE.ALL,
-      regions: [],
-      bodyType: BODY_TYPE.SEDAN,
-      suspension: SUSPENSION_TYPE.PARTIAL,
-      driveType: DRIVE_TYPE.FWD,
-      carCountries: [],
-      productionYearFrom: commonFilters?.ranges?.year?.min,
-      productionYearTo: commonFilters?.ranges?.year?.max,
-      milageFrom: commonFilters?.ranges?.mileage?.min,
-      milageTo: commonFilters?.ranges?.mileage?.max,
-      noMilage: false,
+    defaultValues: (formValues && {
+      ...formValues,
+      price_range: [
+        formValues.price_min || 0,
+        formValues.price_max || commonFilters?.ranges?.price?.max || 0,
+      ],
+    }) || {
+      price_range: [0, commonFilters?.ranges?.price?.max],
+      bargaining: false,
+      year_min: null,
+      year_max: null,
+      mileage_max: null,
     },
   });
 
-  const { control, watch, setValue, reset, handleSubmit } = form;
+  const { control, reset, setValue, handleSubmit } = form;
 
-  const [noMilage] = watch(["noMilage"]);
+  const brand = useWatch({ control, name: "brand_id" });
+  const region = useWatch({ control, name: "region_id" });
+
+  const { data: models, isLoading: isModelsLoading } = useModels(brand);
+  const { data: settlements, isLoading: isSettlementsLoading } =
+    useSettlements(region);
+
+  const carBrandModels = useMemo(
+    () =>
+      models?.map((model) => ({
+        label: model.name,
+        value: String(model.id),
+      })) || [],
+    [models],
+  );
+
+  const settlementsOptions = useMemo(
+    () =>
+      settlements?.map((settlement) => ({
+        label: settlement.name,
+        value: String(settlement.id),
+      })) || [],
+    [settlements],
+  );
 
   return (
     <Card>
@@ -81,13 +88,33 @@ export default function SearchForm() {
             className="flex flex-col gap-8"
             style={{ paddingBottom: (bottom || 20) + 70 }}
             onSubmit={handleSubmit((formValues) => {
-              console.log(formValues);
-            })}
+              const actualValues: Partial<SearchFormValues> = {};
+
+              Object.entries(formValues).forEach(([key, value]) => {
+                if (
+                  value !== null &&
+                  value !== undefined &&
+                  value !== "" &&
+                  key !== "price_range"
+                ) {
+                  Object.assign(actualValues, { [key]: value });
+                } else if (key === "price_range" && Array.isArray(value)) {
+                  Object.assign(actualValues, {
+                    price_min: value[0],
+                    price_max: value[1],
+                  });
+                }
+              });
+
+              setFormValues(actualValues);
+              setSearchOpen(false);
+              console.log(actualValues);
+            }, console.warn)}
           >
             <div className="flex flex-col gap-3">
               <FormField
                 control={control}
-                name="priceRange"
+                name="price_range"
                 render={({ field }) => {
                   (
                     document.querySelector(
@@ -148,7 +175,7 @@ export default function SearchForm() {
 
               <FormField
                 control={control}
-                name="possibleBargain"
+                name="bargaining"
                 render={({ field }) => (
                   <FormItem className="justify-items-start">
                     <FormControl>
@@ -166,7 +193,7 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="typeOfCar"
+              name="type_of_car_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тип траспорта</FormLabel>
@@ -198,18 +225,20 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="carBrands"
+              name="brand_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Марка</FormLabel>
 
-                  <Multiselect
+                  <Select
                     listTitle="Марка"
                     options={brands ?? []}
-                    value={field.value ?? []}
+                    value={field.value ? String(field.value) : null}
                     onChange={(val) => {
-                      console.log(val);
-                      field.onChange(val);
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      }
+                      setValue("model_id", null);
                     }}
                   />
                 </FormItem>
@@ -218,16 +247,24 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="carModels"
+              name="model_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Модель</FormLabel>
 
-                  <Multiselect
+                  <Select
+                    disabled={isModelsLoading || !brand}
+                    isLoading={isModelsLoading}
                     listTitle="Модель"
-                    options={CAR_BRANDS_OPTIONS}
-                    value={field.value ?? []}
-                    onChange={field.onChange}
+                    options={carBrandModels}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      } else if (val === null) {
+                        field.onChange(val);
+                      }
+                    }}
                   />
                 </FormItem>
               )}
@@ -235,7 +272,7 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="condition"
+              name="condition_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Стан</FormLabel>
@@ -243,8 +280,12 @@ export default function SearchForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
                       {commonFilters?.condition?.map((option) => (
@@ -263,35 +304,7 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="carAccident"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Участь в ДТП</FormLabel>
-
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      {CAR_ACCIDENT_OPTIONS.map((option) => (
-                        <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="fuelType"
+              name="fuel_type_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Паливо</FormLabel>
@@ -299,8 +312,12 @@ export default function SearchForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
                       {commonFilters?.fuel_type?.map((option) => (
@@ -319,7 +336,7 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="transmission"
+              name="gearbox_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Коробка передач</FormLabel>
@@ -327,8 +344,12 @@ export default function SearchForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
                       {commonFilters?.gearbox?.map((option) => (
@@ -347,16 +368,21 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="regions"
+              name="region_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Регіон</FormLabel>
 
-                  <Multiselect
+                  <Select
                     listTitle="Регіон"
                     options={regions ?? []}
-                    value={field.value ?? []}
-                    onChange={field.onChange}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      }
+                      setValue("settlement_id", null);
+                    }}
                   />
                 </FormItem>
               )}
@@ -364,7 +390,32 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="bodyType"
+              name="settlement_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Населений пункт*</FormLabel>
+
+                  <Select
+                    disabled={isSettlementsLoading || !region}
+                    isLoading={isSettlementsLoading}
+                    listTitle="Населений пункт"
+                    options={settlementsOptions ?? []}
+                    value={field.value ? String(field.value) : null}
+                    onChange={(val) => {
+                      if (!Number.isNaN(val)) {
+                        field.onChange(Number(val));
+                      } else if (val === null) {
+                        field.onChange(val);
+                      }
+                    }}
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="body_type_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тип кузова</FormLabel>
@@ -372,8 +423,12 @@ export default function SearchForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
+                      value={String(field.value)}
+                      onValueChange={(val) => {
+                        if (!Number.isNaN(val)) {
+                          field.onChange(Number(val));
+                        }
+                      }}
                       className="flex flex-wrap items-center gap-2"
                     >
                       {commonFilters?.body_type.map((option) => (
@@ -392,35 +447,7 @@ export default function SearchForm() {
 
             <FormField
               control={control}
-              name="suspension"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Підвіска</FormLabel>
-
-                  <FormControl>
-                    <ToggleGroup
-                      type="single"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex flex-wrap items-center gap-2"
-                    >
-                      {SUSPENSION_TYPE_OPTIONS.map((option) => (
-                        <ToggleGroupItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="driveType"
+              name="drive_type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Привод</FormLabel>
@@ -428,7 +455,7 @@ export default function SearchForm() {
                   <FormControl>
                     <ToggleGroup
                       type="single"
-                      value={field.value}
+                      value={field.value ?? ""}
                       onValueChange={field.onChange}
                       className="flex flex-wrap items-center gap-2"
                     >
@@ -446,34 +473,24 @@ export default function SearchForm() {
               )}
             />
 
-            <FormField
-              control={control}
-              name="carCountries"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Країна виробник</FormLabel>
-
-                  <Multiselect
-                    listTitle="Країна"
-                    options={CAR_COUNTRIES_OPTIONS}
-                    value={field.value ?? []}
-                    onChange={field.onChange}
-                  />
-                </FormItem>
-              )}
-            />
-
             <div className="items-end gap-3 grid grid-cols-2">
               <FormField
                 control={control}
-                name="productionYearFrom"
+                name="year_min"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Рік виробництва</FormLabel>
 
                     <FormControl>
                       <Input
-                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          if (e.target.value === "") {
+                            field.onChange(null);
+                          } else if (!Number.isNaN(Number(e.target.value))) {
+                            field.onChange(Number(e.target.value));
+                          }
+                        }}
                         placeholder="Від"
                         type="number"
                         min={commonFilters?.ranges?.year?.min}
@@ -485,12 +502,19 @@ export default function SearchForm() {
 
               <FormField
                 control={control}
-                name="productionYearTo"
+                name="year_max"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
-                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          if (e.target.value === "") {
+                            field.onChange(null);
+                          } else if (!Number.isNaN(Number(e.target.value))) {
+                            field.onChange(Number(e.target.value));
+                          }
+                        }}
                         placeholder="До"
                         type="number"
                         max={commonFilters?.ranges?.year?.max}
@@ -501,82 +525,43 @@ export default function SearchForm() {
               />
             </div>
 
-            <div className="items-end gap-3 grid grid-cols-2">
-              <FormField
-                control={control}
-                name="milageFrom"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Пробіг (тис км)</FormLabel>
-
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Від"
-                        disabled={noMilage}
-                        type="number"
-                        min={commonFilters?.ranges?.mileage?.min}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="milageTo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="До"
-                        disabled={noMilage}
-                        type="number"
-                        max={commonFilters?.ranges?.mileage?.max}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="noMilage"
-                render={({ field }) => (
-                  <FormItem className="justify-items-start">
-                    <FormControl>
-                      <Toggle
-                        pressed={field.value}
-                        onPressedChange={(val) => {
-                          field.onChange(val);
-
-                          if (val) {
-                            setValue("milageFrom", undefined);
-                            setValue("milageTo", undefined);
-                          }
-                        }}
-                      >
-                        Без пробігу
-                      </Toggle>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={control}
+              name="mileage_max"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Макс. Пробіг</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        if (e.target.value === "") {
+                          field.onChange(null);
+                        } else if (!Number.isNaN(Number(e.target.value))) {
+                          field.onChange(Number(e.target.value));
+                        }
+                      }}
+                      placeholder="Максимальний пробіг (тис. км)"
+                      type="number"
+                      max={commonFilters?.ranges?.mileage?.max}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
             <div
               className="bottom-0 left-0 fixed flex items-center gap-1.5 bg-white px-4 pt-5 border-grey border-t rounded-t-2xl w-full"
               style={{ paddingBottom: bottom || "20px" }}
             >
-              <div className="opacity-60 font-medium text-black">
-                <p>Знайдено</p>
-                <p>6500 авто</p>
-              </div>
+              <Button type="button" className="rounded-full w-12 h-12">
+                <SaveIcon />
+              </Button>
 
               <Button
                 onClick={() => {
                   reset();
+                  setFormValues(null);
                   setSearchOpen(false);
                 }}
                 variant={"secondary"}
