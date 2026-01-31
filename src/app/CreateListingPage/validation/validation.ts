@@ -7,7 +7,7 @@ export const CreateListingFormSchema = z
         z.object({
           id: z.string(),
           url: z.file().or(z.string()),
-        })
+        }),
       )
       .min(1, "Додайте хоча б одне фото автомобіля"),
 
@@ -40,6 +40,7 @@ export const CreateListingFormSchema = z
     settlement: z.number().nullable(),
 
     year: z.number().nullable(),
+    description: z.string().optional(),
     vin_number: z.string().min(1, { message: "Введіть VIN номер" }),
   })
   .superRefine((data, ctx) => {

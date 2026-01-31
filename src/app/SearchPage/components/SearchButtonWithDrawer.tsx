@@ -43,6 +43,7 @@ export default function SearchButtonWithDrawer() {
           <DrawerTitle className="opacity-60 font-medium text-2xl text-center leading-[19px]">
             Пошук
           </DrawerTitle>
+
           <SearchForm />
         </div>
       </DrawerContent>

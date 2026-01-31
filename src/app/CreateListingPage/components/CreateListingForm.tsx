@@ -53,6 +53,7 @@ export default function CreateListingForm() {
       engine_capacity_l: "",
       drive_type: "",
       noMileage: false,
+      description: "",
       vin_number: "",
     },
   });

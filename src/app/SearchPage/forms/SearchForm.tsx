@@ -91,20 +91,20 @@ export default function SearchForm() {
                 render={({ field }) => {
                   (
                     document.querySelector(
-                      "#range-input .range-slider__thumb[data-lower]"
+                      "#range-input .range-slider__thumb[data-lower]",
                     ) as HTMLElement | null
                   )?.style.setProperty(
                     "--slider-value",
-                    `"$${field.value?.[0]}"`
+                    `"$${field.value?.[0]}"`,
                   );
 
                   (
                     document.querySelector(
-                      "#range-input .range-slider__thumb[data-upper]"
+                      "#range-input .range-slider__thumb[data-upper]",
                     ) as HTMLElement | null
                   )?.style.setProperty(
                     "--slider-value",
-                    `"$${field.value?.[1]}"`
+                    `"$${field.value?.[1]}"`,
                   );
 
                   return (
