@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { useFiltersStore } from "@/stores/filters-store";
 import { useSearchStore } from "@/stores/search-store";
 import useModels from "@/hooks/filters/useModels";
@@ -12,6 +13,7 @@ import {
   SearchFormValidationSchema,
   type SearchFormValues,
 } from "../validation/validation";
+import { ROUTES_NAMES } from "@/constants/router";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/Card";
@@ -35,8 +37,9 @@ import { SaveIcon } from "lucide-react";
 export default function SearchForm() {
   const [inputFocused, setInputFocused] = useState(false);
   const { commonFilters, regions, brands } = useFiltersStore();
-  const { setSearchOpen, formValues, setFormValues } = useSearchStore();
+  const { formValues, setFormValues } = useSearchStore();
   const { bottom } = viewport.safeAreaInsets();
+  const navigate = useNavigate();
 
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(SearchFormValidationSchema),
@@ -117,8 +120,7 @@ export default function SearchForm() {
               });
 
               setFormValues(actualValues);
-              setSearchOpen(false);
-              console.log(actualValues);
+              navigate(ROUTES_NAMES.ROOT);
             }, console.warn)}
           >
             <div className="flex flex-col gap-3">
@@ -587,7 +589,7 @@ export default function SearchForm() {
                 onClick={() => {
                   reset();
                   setFormValues(null);
-                  setSearchOpen(false);
+                  navigate(ROUTES_NAMES.ROOT);
                 }}
                 variant={"secondary"}
                 className="bg-grey hover:bg-grey/90"
