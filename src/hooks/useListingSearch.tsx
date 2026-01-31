@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSearchStore } from "@/stores/search-store";
+
 import searchService from "@/services/search-service";
 
 import type { AxiosError } from "axios";
 
 export default function useListingSearch(query?: string) {
+  const { formValues } = useSearchStore();
   const {
     data,
     isLoading,
@@ -14,11 +17,11 @@ export default function useListingSearch(query?: string) {
     error,
     isError,
   } = useInfiniteQuery({
-    queryKey: ["listingsSearch", query],
+    queryKey: ["listingsSearch", query, formValues],
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
       searchService.search({
-        query,
+        query: formValues || undefined,
         offset: pageParam,
         limit: 10,
       }),
