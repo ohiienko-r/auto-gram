@@ -46,6 +46,12 @@ export default function MainPage() {
             Array.from({ length: 2 }).map((_, index) => (
               <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
             ))}
+
+          {!isLoading && listings.length === 0 && (
+            <p className="mt-10 text-black/40 text-center">
+              Нічого не знайдено
+            </p>
+          )}
         </div>
 
         {hasNextPage && (

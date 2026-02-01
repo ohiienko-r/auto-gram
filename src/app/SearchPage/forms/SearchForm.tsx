@@ -30,9 +30,8 @@ import Select from "@/components/Select";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import RangeSlider from "react-range-slider-input";
+import SaveButtonWithDrawer from "../components/SaveButtonWithDrawer";
 import "react-range-slider-input/dist/style.css";
-
-import { SaveIcon } from "lucide-react";
 
 export default function SearchForm() {
   const [inputFocused, setInputFocused] = useState(false);
@@ -108,14 +107,22 @@ export default function SearchForm() {
                   value !== null &&
                   value !== undefined &&
                   value !== "" &&
-                  key !== "price_range"
+                  key !== "price_range" &&
+                  key !== "bargaining"
                 ) {
                   Object.assign(actualValues, { [key]: value });
-                } else if (key === "price_range" && Array.isArray(value)) {
+                } else if (
+                  key === "price_range" &&
+                  Array.isArray(value) &&
+                  value?.[0] !== 0 &&
+                  value?.[1] !== 400000
+                ) {
                   Object.assign(actualValues, {
                     price_min: value[0],
                     price_max: value[1],
                   });
+                } else if (key === "bargaining" && value !== false) {
+                  Object.assign(actualValues, { [key]: value });
                 }
               });
 
@@ -581,9 +588,7 @@ export default function SearchForm() {
                 paddingBottom: bottom || "20px",
               }}
             >
-              <Button type="button" className="rounded-full w-12 h-12">
-                <SaveIcon />
-              </Button>
+              <SaveButtonWithDrawer />
 
               <Button
                 onClick={() => {
