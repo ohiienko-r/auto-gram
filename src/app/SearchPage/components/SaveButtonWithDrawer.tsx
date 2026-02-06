@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { useSearchStore } from "@/stores/search-store";
 import useSaveSearch from "../hooks/useSaveSearch";
-import useSavedSearches from "../hooks/useSavedSearches";
 import { toast } from "sonner";
 
 import { transformSearchPayload } from "../utils/utils";
@@ -16,16 +15,11 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
-import { SAVED_SEARCHES_TABS } from "../constants/tabs";
-
-import { SaveIcon, TrashIcon, CheckIcon } from "lucide-react";
+import { SaveIcon } from "lucide-react";
 
 export default function SaveButtonWithDrawer() {
   const [open, setOpen] = useState(false);
   const { formValues } = useSearchStore();
-  const { data } = useSavedSearches();
   const { mutateAsync, isPending } = useSaveSearch();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +41,10 @@ export default function SaveButtonWithDrawer() {
 
     toast.promise(() => mutateAsync(saveSearchPayload), {
       loading: "Зберігаємо пошук...",
+      style: {
+        background: "#3c0366",
+        color: "#e9d4ff",
+      },
     });
 
     setOpen(false);
@@ -70,62 +68,22 @@ export default function SaveButtonWithDrawer() {
 
       <DrawerContent aria-describedby={undefined} className="px-2 min-h-[90vh]">
         <DrawerHeader>
-          <DrawerTitle>Пошуки</DrawerTitle>
+          <DrawerTitle>Зберегти пошук</DrawerTitle>
         </DrawerHeader>
 
-        <Tabs defaultValue={SAVED_SEARCHES_TABS.SAVE}>
-          <TabsList className="w-full">
-            {Object.values(SAVED_SEARCHES_TABS).map((tab) => (
-              <TabsTrigger
-                key={tab}
-                value={tab}
-                className="w-full font-semibold data-[state=active]:text-primary"
-              >
-                {tab}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <div className="flex flex-col gap-2">
+          <Label>Назва пошуку</Label>
 
-          <TabsContent value={SAVED_SEARCHES_TABS.SAVE}>
-            <div className="flex flex-col gap-2">
-              <Label>Назва пошуку</Label>
+          <Input
+            ref={inputRef}
+            placeholder="Назва пошуку"
+            disabled={isPending}
+          />
 
-              <Input
-                ref={inputRef}
-                placeholder="Назва пошуку"
-                disabled={isPending}
-              />
-
-              <Button onClick={handleSaveSearch} disabled={isPending}>
-                Зберегти
-              </Button>
-            </div>
-          </TabsContent>
-
-          <TabsContent value={SAVED_SEARCHES_TABS.SAVED}>
-            <ul className="flex flex-col gap-2">
-              <li className="flex justify-between items-center gap-2 px-3 py-2 border rounded-md">
-                <p className="font-semibold">Search name</p>
-
-                <span className="inline-flex items-center gap-4">
-                  <button
-                    className="hover:opacity-60 text-primary transition-opacity cursor-pointer"
-                    title="Apply filters"
-                  >
-                    <CheckIcon />
-                  </button>
-
-                  <button
-                    className="hover:opacity-60 text-red-500 transition-opacity cursor-pointer"
-                    title="Remove saved filter"
-                  >
-                    <TrashIcon />
-                  </button>
-                </span>
-              </li>
-            </ul>
-          </TabsContent>
-        </Tabs>
+          <Button onClick={handleSaveSearch} disabled={isPending}>
+            Зберегти
+          </Button>
+        </div>
       </DrawerContent>
     </Drawer>
   );
