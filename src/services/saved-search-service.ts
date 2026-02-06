@@ -11,7 +11,7 @@ export default {
   },
 
   async createSavedSearch(data: SaveSearchPayload) {
-    await api.post(`${this.BASE_URL}create/`, data);
+    await api.post(`/api/tg/saved-searches-create/`, data);
   },
 
   async deleteSavedSearch(searchId: number) {

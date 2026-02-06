@@ -206,7 +206,7 @@ export default function SearchForm() {
                         pressed={field.value}
                         onPressedChange={field.onChange}
                       >
-                        Можливен торг
+                        Можливий торг
                       </Toggle>
                     </FormControl>
                   </FormItem>

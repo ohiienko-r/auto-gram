@@ -9,7 +9,7 @@ import type { AxiosError } from "axios";
 export default function useSaveSearch() {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["saveSearch"],
     mutationFn: (data: SaveSearchPayload) =>
       savedSearchService.createSavedSearch(data),
@@ -23,5 +23,5 @@ export default function useSaveSearch() {
     },
   });
 
-  return { mutate, isPending };
+  return { mutateAsync, isPending };
 }
