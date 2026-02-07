@@ -17,7 +17,7 @@ export default function FavoritesPage() {
     isRefetching,
   } = useFavorites();
 
-  const favorites = data?.pages.flatMap((page) => page.results) ?? [];
+  const favorites = data?.pages?.flatMap((page) => page.results) ?? [];
 
   const showLoader = isLoading || (isRefetching && favorites.length === 0);
 

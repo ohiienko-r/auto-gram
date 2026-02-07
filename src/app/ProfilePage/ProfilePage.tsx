@@ -22,7 +22,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
 
   const { approved, pending, removed } = useMemo(() => {
-    const listings = data?.pages.flatMap((page) => page?.results) ?? [];
+    const listings = data?.pages?.flatMap((page) => page?.results) ?? [];
     return {
       approved: listings.filter(
         (listing) => listing.status === LISTING_STATUS.APPROVED,
