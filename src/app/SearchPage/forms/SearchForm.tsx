@@ -232,7 +232,7 @@ export default function SearchForm() {
                       }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {commonFilters?.type_of_car.map((option) => (
+                      {commonFilters?.type_of_car?.map((option) => (
                         <ToggleGroupItem
                           key={option.id}
                           value={String(option.id)}
@@ -454,7 +454,7 @@ export default function SearchForm() {
                       }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {commonFilters?.body_type.map((option) => (
+                      {commonFilters?.body_type?.map((option) => (
                         <ToggleGroupItem
                           key={option.id}
                           value={String(option.id)}
@@ -482,7 +482,7 @@ export default function SearchForm() {
                       onValueChange={field.onChange}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {commonFilters?.drive_type.map((option) => (
+                      {commonFilters?.drive_type?.map((option) => (
                         <ToggleGroupItem
                           key={option.value}
                           value={String(option.value)}

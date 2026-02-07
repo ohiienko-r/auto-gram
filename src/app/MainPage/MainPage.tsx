@@ -17,7 +17,7 @@ export default function MainPage() {
 
   const navigate = useNavigate();
 
-  const listings = data?.pages.flatMap((page) => page.results) ?? [];
+  const listings = data?.pages?.flatMap((page) => page.results) ?? [];
 
   return (
     <section className="flex flex-col flex-1 gap-4 px-4 pt-5 overflow-hidden">
@@ -38,7 +38,7 @@ export default function MainPage() {
         <h3 className="font-medium text-black/60 text-base">Рекомендуємо</h3>
 
         <div className="flex flex-col gap-5">
-          {listings.map((listing) => (
+          {listings?.map((listing) => (
             <CarListingCard key={listing.id} {...listing} />
           ))}
 
@@ -47,7 +47,7 @@ export default function MainPage() {
               <Skeleton key={index} className="rounded-2xl w-full h-[430px]" />
             ))}
 
-          {!isLoading && listings.length === 0 && (
+          {!isLoading && listings?.length === 0 && (
             <p className="mt-10 text-black/40 text-center">
               Нічого не знайдено
             </p>

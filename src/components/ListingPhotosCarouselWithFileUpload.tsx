@@ -85,7 +85,7 @@ export default function ListingPhotosCarouselWithFileUpload({
   const unifiedItems = useMemo(() => {
     if (!data?.length) return [];
 
-    return data.map((item) => ({
+    return data?.map((item) => ({
       ...item,
       photo:
         typeof item.url === "string" ? item.url : URL.createObjectURL(item.url),

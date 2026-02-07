@@ -45,7 +45,7 @@ export default function Multiselect({
     if (!searchTerm) return options;
 
     return options.filter((option) =>
-      option.label?.toLowerCase().includes(searchTerm)
+      option.label?.toLowerCase().includes(searchTerm),
     );
   }, [filter, options]);
 
@@ -118,12 +118,12 @@ export default function Multiselect({
             <ul className="flex flex-col justify-start gap-3 px-4 overflow-y-auto">
               <Separator className="bg-transparent" />
 
-              {currentOptions.map((option) => (
+              {currentOptions?.map((option) => (
                 <li key={option.value} className="flex flex-col gap-3">
                   <button
                     className={clsx(
                       "flex justify-start items-center gap-2 font-medium",
-                      value?.includes(option.value) && "text-primary"
+                      value?.includes(option.value) && "text-primary",
                     )}
                     onClick={() => handleOnChange(option.value)}
                   >

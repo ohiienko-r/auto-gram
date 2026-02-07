@@ -538,7 +538,7 @@ export default function CreateListingForm() {
                       }}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {commonFilters?.body_type.map((option) => (
+                      {commonFilters?.body_type?.map((option) => (
                         <ToggleGroupItem
                           key={option.id}
                           value={String(option.id)}
@@ -567,7 +567,7 @@ export default function CreateListingForm() {
                       onValueChange={field.onChange}
                       className="flex flex-wrap items-center gap-2"
                     >
-                      {commonFilters?.drive_type.map((option) => (
+                      {commonFilters?.drive_type?.map((option) => (
                         <ToggleGroupItem
                           key={option.value}
                           value={option.value}

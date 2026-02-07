@@ -31,14 +31,14 @@ export default function useToggleListingLike() {
           if (!old) return old;
           return {
             ...old,
-            pages: old.pages.map((page) => ({
+            pages: old.pages?.map((page) => ({
               ...page,
-              results: page.results.map((car) =>
-                car.id === id ? { ...car, is_liked: !car.is_liked } : car
+              results: page.results?.map((car) =>
+                car.id === id ? { ...car, is_liked: !car.is_liked } : car,
               ),
             })),
           };
-        }
+        },
       );
 
       queryClient.setQueryData<CarListing>(["listingDetails", id], (old) => {
@@ -52,7 +52,7 @@ export default function useToggleListingLike() {
           if (!old) return old;
           return {
             ...old,
-            pages: old.pages.map((page) => ({
+            pages: old.pages?.map((page) => ({
               ...page,
               results: page.results.filter((car) => {
                 if (car.id === id && car.is_liked) return false;
@@ -63,7 +63,7 @@ export default function useToggleListingLike() {
                 : page.count,
             })),
           };
-        }
+        },
       );
 
       return {
@@ -78,13 +78,13 @@ export default function useToggleListingLike() {
       if (context?.previousSearchData) {
         queryClient.setQueriesData(
           { queryKey: ["listingsSearch"] },
-          context.previousSearchData
+          context.previousSearchData,
         );
       }
       if (context?.previousDetailsData) {
         queryClient.setQueryData(
           ["listingDetails", context.id],
-          context.previousDetailsData
+          context.previousDetailsData,
         );
       }
       if (context?.previousFavoritesData) {

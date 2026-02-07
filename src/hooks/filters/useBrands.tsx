@@ -18,7 +18,7 @@ export default function useBrands({ enabled = true }: { enabled: boolean }) {
 
   useEffect(() => {
     if (data) {
-      const brandsOptions = data.map((item) => ({
+      const brandsOptions = data?.map((item) => ({
         value: String(item.id),
         label: item.name,
       }));
@@ -33,7 +33,7 @@ export default function useBrands({ enabled = true }: { enabled: boolean }) {
       console.error(
         "Error fetching brands filters:",
         axiosError.message,
-        axiosError.response?.data
+        axiosError.response?.data,
       );
     }
   }, [isError, error]);

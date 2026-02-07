@@ -44,7 +44,7 @@ export default function FavoritesPage() {
           </h3>
 
           <div className="flex flex-col gap-5">
-            {favorites.map((favorite) => (
+            {favorites?.map((favorite) => (
               <CarListingCard key={favorite.id} {...favorite} />
             ))}
 
